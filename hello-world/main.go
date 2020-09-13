@@ -9,8 +9,8 @@ var scrapingService service.ScrapingService
 
 func main() {
 	url := "https://iop-dc.com/"
-	err := scrapingService.Scrape(url)
+	ocean, err := scrapingService.Scrape(url)
 	if err != nil {
-		fmt.Println("url scrapping failed")
+		fmt.Println("スクレイピングの途中で失敗しました", err)
 	}
 }
