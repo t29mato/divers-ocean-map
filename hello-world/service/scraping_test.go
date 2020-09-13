@@ -4,31 +4,29 @@ import (
 	"fmt"
 	"hello-world/model"
 	"os"
+	"testing"
+	"time"
 
-	"github.com/PuerkitoBio/goquery"
+	"github.com/stretchr/testify/assert"
 )
 
+var ss ScrapingServiceImpl
+
 // TestScrape ...
-func TestScrape(url string) (model.Ocean, error) {
-	var doc *goquery.Document
-	var err error
-
-	// 単体テスト実行時はローカルのHTMLファイルから取得する
-	if os.Getenv("UNIT_TEST") != "true" {
-		doc, err = goquery.NewDocument(url)
-	} else {
-		file, err := os.Open(url)
-		if err != nil {
-			fmt.Println("有効なファイルパスでありません。url =", url)
-		}
-		defer file.Close()
-		doc, err = goquery.NewDocumentFromReader(file)
-	}
-
-	doc.Find("a").Each(func(_ int, s *goquery.Selection) {
-		url, _ := s.Attr("href")
-		fmt.Println(url)
-	})
-
-	return err
+func TestScrapeIOP(t *testing.T) {
+	pwd, _ := os.Getwd()
+	url := pwd + "/testdata/" + t.Name() + "_20200913.html"
+	fmt.Println(url)
+	ocean, _ := ss.Scrape(url)
+	assert.Equal(t, &model.Ocean{
+		Temperature: model.Temperature{
+			Min: 21,
+			Max: 27,
+		},
+		Visibility: model.Visibility{
+			Min: 10,
+			Max: 20,
+		},
+		MeasuredTime: time.Date(2020, time.September, 13, 0, 0, 0, 0, time.UTC),
+	}, ocean)
 }

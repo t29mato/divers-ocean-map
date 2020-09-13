@@ -4,22 +4,21 @@ import "time"
 
 // Ocean ...
 type Ocean struct {
-	temperature Temperature
-	visibility  Visibility
-	createdAt   time.Time
-	measuredAt  time.Time
+	Temperature  Temperature
+	Visibility   Visibility
+	MeasuredTime time.Time
 }
 
 // Temperature ...
 type Temperature struct {
-	avg int
-	min int
-	max int
+	Min int
+	Med int
+	Max int
 }
 
 // Visibility ...
 type Visibility struct {
-	avg int
-	min int
-	max int
+	Min int
+	Med int
+	Max int
 }
