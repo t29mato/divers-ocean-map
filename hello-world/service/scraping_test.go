@@ -1,16 +1,34 @@
 package service
 
 import (
-	"testing"
+	"fmt"
+	"hello-world/model"
+	"os"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/PuerkitoBio/goquery"
 )
 
-// ScrapingService ...
-var ss ScrapingServiceImpl
+// TestScrape ...
+func TestScrape(url string) (model.Ocean, error) {
+	var doc *goquery.Document
+	var err error
 
-func TestSetURL(t *testing.T) {
-	url := "https://google.com"
-	ss.setURL(url)
-	assert.Equal(t, url, ss.url)
+	// 単体テスト実行時はローカルのHTMLファイルから取得する
+	if os.Getenv("UNIT_TEST") != "true" {
+		doc, err = goquery.NewDocument(url)
+	} else {
+		file, err := os.Open(url)
+		if err != nil {
+			fmt.Println("有効なファイルパスでありません。url =", url)
+		}
+		defer file.Close()
+		doc, err = goquery.NewDocumentFromReader(file)
+	}
+
+	doc.Find("a").Each(func(_ int, s *goquery.Selection) {
+		url, _ := s.Attr("href")
+		fmt.Println(url)
+	})
+
+	return err
 }

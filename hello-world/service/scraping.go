@@ -1,18 +1,41 @@
 package service
 
-import "github.com/PuerkitoBio/goquery"
+import (
+	"fmt"
+	"hello-world/model"
+	"os"
+
+	"github.com/PuerkitoBio/goquery"
+)
 
 // ScrapingServiceImpl ...
-type ScrapingServiceImpl struct {
-	url string
-}
+type ScrapingServiceImpl struct{}
 
 // ScrapingService ...
 type ScrapingService interface {
-	setURL(url string)
-	Fetch(string) *goquery.Document
+	Scrape(url string) (model.Ocean, error)
 }
 
-func (s *ScrapingServiceImpl) setURL(url string) {
-	s.url = url
+// Scrape ...
+func Scrape(url string) (model.Ocean, error) {
+	var doc *goquery.Document
+	var err error
+
+	// 単体テスト実行時はローカルのHTMLファイルから取得する
+	if os.Getenv("UNIT_TEST") != "true" {
+		doc, err = goquery.NewDocument(url)
+	} else {
+		file, err := os.Open(url)
+		if err != nil {
+			fmt.Println("有効なファイルパスでありません。url =", url)
+		}
+		defer file.Close()
+		doc, err = goquery.NewDocumentFromReader(file)
+	}
+
+	doc.Find("a").Each(func(_ int, s *goquery.Selection) {
+		url, _ := s.Attr("href")
+		fmt.Println(url)
+	})
+
 }

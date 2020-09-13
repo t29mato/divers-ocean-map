@@ -2,17 +2,15 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/PuerkitoBio/goquery"
+	"hello-world/service"
 )
 
+var scrapingService service.ScrapingService
+
 func main() {
-	doc, err := goquery.NewDocument("https://google.com")
+	url := "https://iop-dc.com/"
+	err := scrapingService.Scrape(url)
 	if err != nil {
 		fmt.Println("url scrapping failed")
 	}
-	doc.Find("a").Each(func(_ int, s *goquery.Selection) {
-		url, _ := s.Attr("href")
-		fmt.Println(url)
-	})
 }
