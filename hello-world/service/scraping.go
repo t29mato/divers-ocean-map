@@ -9,10 +9,10 @@ type ScrapingServiceImpl struct {
 
 // ScrapingService ...
 type ScrapingService interface {
-	setURL(string)
+	setURL(url string)
 	Fetch(string) *goquery.Document
 }
 
 func (s *ScrapingServiceImpl) setURL(url string) {
-	s.setURL(url)
+	s.url = url
 }

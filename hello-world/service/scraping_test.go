@@ -10,6 +10,7 @@ import (
 var ss ScrapingServiceImpl
 
 func TestSetURL(t *testing.T) {
-	ss.setURL("https://google.com")
-	assert.Equal(t, "https://google.com", ss.url)
+	url := "https://google.com"
+	ss.setURL(url)
+	assert.Equal(t, url, ss.url)
 }
