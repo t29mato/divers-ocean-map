@@ -1,6 +1,6 @@
-# sam-app
+# divers-ocean-map
 
-This is a sample template for sam-app - Below is a brief explanation of what we have generated for you:
+This is a sample template for divers-ocean-map - Below is a brief explanation of what we have generated for you:
 
 ```bash
 .
