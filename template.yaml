@@ -17,6 +17,7 @@ Resources:
       CodeUri: hello-world/
       Handler: hello-world
       Runtime: go1.x
+      Policies: AmazonDynamoDBFullAccess
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
       Events:
         CatchAll:
@@ -27,6 +28,15 @@ Resources:
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           PARAM1: VALUE
+  OceanDynamoDBTable:
+    Type: AWS::Serverless:SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: Id
+        Type: Number
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
