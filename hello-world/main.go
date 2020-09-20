@@ -5,7 +5,7 @@ import (
 	"hello-world/service"
 )
 
-var scrapingService service.ScrapingService
+var scrapingService = service.NewScrapingService()
 
 func main() {
 	url := "https://iop-dc.com/"

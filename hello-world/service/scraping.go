@@ -20,6 +20,11 @@ type ScrapingService interface {
 	Scrape(url string) (*model.Ocean, error)
 }
 
+// NewScrapingService ...
+func NewScrapingService() ScrapingService {
+	return &ScrapingServiceImpl{}
+}
+
 // Scrape ...
 func (s *ScrapingServiceImpl) Scrape(url string) (*model.Ocean, error) {
 	var doc *goquery.Document
