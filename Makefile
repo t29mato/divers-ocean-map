@@ -5,5 +5,10 @@ test:
 
 ## Build
 .PHONY: build
-build:
+build: test
 	sam build
+
+## Run Local
+.PHONY: run
+run: build
+	sam local invoke
