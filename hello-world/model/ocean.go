@@ -9,6 +9,23 @@ type Ocean struct {
 	MeasuredTime time.Time
 }
 
+// NewOcean ...
+func NewOcean() *Ocean {
+	return &Ocean{
+		Temperature: Temperature{
+			Min: -1,
+			Med: -1,
+			Max: -1,
+		},
+		Visibility: Visibility{
+			Min: -1,
+			Med: -1,
+			Max: -1,
+		},
+		MeasuredTime: time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
+	}
+}
+
 // Temperature ...
 type Temperature struct {
 	Min int

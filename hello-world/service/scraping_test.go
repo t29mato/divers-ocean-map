@@ -21,10 +21,12 @@ func TestScrapeIOP(t *testing.T) {
 	assert.Equal(t, &model.Ocean{
 		Temperature: model.Temperature{
 			Min: 21,
+			Med: -1,
 			Max: 27,
 		},
 		Visibility: model.Visibility{
 			Min: 10,
+			Med: -1,
 			Max: 20,
 		},
 		MeasuredTime: time.Date(2020, time.September, 13, 0, 0, 0, 0, time.UTC),

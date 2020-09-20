@@ -27,13 +27,43 @@ func NewScrapingService() ScrapingService {
 
 // Scrape ...
 func (s *ScrapingServiceImpl) Scrape(url string) (*model.Ocean, error) {
-	var doc *goquery.Document
-	var err error
-	var ocean model.Ocean
+	ocean := model.NewOcean()
 
+	// DOM取得
+	doc, err := fetchDocument(url)
+	if err != nil {
+		fmt.Println("HTMLファイルの読み込みに失敗しました。url =", url)
+		return nil, err
+	}
+
+	// 水温取得
+	err = fetchTemperature("#homeConditionDetail > dl > dd:nth-child(2)", doc, ocean)
+	if err != nil {
+		fmt.Println("水温の取得に失敗")
+		return nil, err
+	}
+
+	// 透明度取得
+	err = fetchVisibility("#homeConditionDetail > dl > dd:nth-child(4)", doc, ocean)
+	if err != nil {
+		fmt.Println("透明度の取得に失敗")
+		return nil, err
+	}
+
+	// 測定日時取得
+	err = fetchMeasuredTime("#homeConditionIndex > dl > dt", doc, ocean)
+	if err != nil {
+		fmt.Println("測定日時の取得に失敗")
+		return nil, err
+	}
+
+	return ocean, err
+}
+
+func fetchDocument(url string) (*goquery.Document, error) {
 	// 単体テスト実行時はローカルのHTMLファイルから取得する
 	if strings.Contains(url, "http") {
-		doc, err = goquery.NewDocument(url)
+		return goquery.NewDocument(url)
 	} else {
 		file, err := os.Open(url)
 		if err != nil {
@@ -41,17 +71,18 @@ func (s *ScrapingServiceImpl) Scrape(url string) (*model.Ocean, error) {
 			return nil, err
 		}
 		defer file.Close()
-		doc, err = goquery.NewDocumentFromReader(file)
+		return goquery.NewDocumentFromReader(file)
 	}
+}
 
-	temperatureHTML, _ := doc.Find("#homeConditionDetail > dl > dd:nth-child(2)").Html()
+func fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error {
+	temperatureHTML, _ := doc.Find(query).Html()
 	reg := regexp.MustCompile(`\d{1,2}`)
 	temperatures := reg.FindAllStringSubmatch(temperatureHTML, -1)
-
 	min, err := strconv.Atoi(temperatures[0][0])
 	if err != nil {
 		fmt.Println("水温1の数値変換に失敗, 変換前=", temperatures[0][0])
-		return nil, err
+		return err
 	}
 	switch len(temperatures) {
 	case 1:
@@ -60,19 +91,23 @@ func (s *ScrapingServiceImpl) Scrape(url string) (*model.Ocean, error) {
 		max, err := strconv.Atoi(temperatures[1][0])
 		if err != nil {
 			fmt.Println("水温2の数値変換に失敗, 変換前=", temperatures[1][0])
-			return nil, err
+			return err
 		}
 		ocean.Temperature.Min = min
 		ocean.Temperature.Max = max
 	}
+	return nil
+}
 
-	visibilityHTML, _ := doc.Find("#homeConditionDetail > dl > dd:nth-child(4)").Html()
+func fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error {
+	visibilityHTML, _ := doc.Find(query).Html()
+	reg := regexp.MustCompile(`\d{1,2}`)
 	visibilities := reg.FindAllStringSubmatch(visibilityHTML, -1)
 
-	min, err = strconv.Atoi(visibilities[0][0])
+	min, err := strconv.Atoi(visibilities[0][0])
 	if err != nil {
 		fmt.Println("透明度1の数値変換に失敗, 変換前=", visibilities[0][0])
-		return nil, err
+		return err
 	}
 	switch len(visibilities) {
 	case 1:
@@ -81,26 +116,29 @@ func (s *ScrapingServiceImpl) Scrape(url string) (*model.Ocean, error) {
 		max, err := strconv.Atoi(visibilities[1][0])
 		if err != nil {
 			fmt.Println("透明度2の数値変換に失敗, 変換前=", visibilities[1][0])
-			return nil, err
+			return err
 		}
 		ocean.Visibility.Min = min
 		ocean.Visibility.Max = max
 	}
+	return nil
+}
 
-	MeasuredTimeHTML, _ := doc.Find("#homeConditionIndex > dl > dt").Html()
+func fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error {
+	MeasuredTimeHTML, _ := doc.Find(query).Html()
+	reg := regexp.MustCompile(`\d{1,2}`)
 	measuredTimes := reg.FindAllStringSubmatch(MeasuredTimeHTML, -1)
 
 	month, err := strconv.Atoi(measuredTimes[0][0])
 	if err != nil {
 		fmt.Println("月の数値変換に失敗, 変換前=", measuredTimes[0][0])
-		return nil, err
+		return err
 	}
 	day, err := strconv.Atoi(measuredTimes[1][0])
 	if err != nil {
 		fmt.Println("日の数値変換に失敗, 変換前=", measuredTimes[1][0])
-		return nil, err
+		return err
 	}
 	ocean.MeasuredTime = time.Date(time.Now().Year(), time.Month(month), day, 0, 0, 0, 0, time.UTC)
-
-	return &ocean, err
+	return nil
 }
