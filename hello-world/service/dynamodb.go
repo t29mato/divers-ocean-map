@@ -8,6 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/google/uuid"
+
+	"hello-world/model"
 )
 
 // DynamoDBServiceImpl ...
@@ -20,13 +22,18 @@ type DynamoDBServiceImpl struct {
 // DynamoDBService ...
 type DynamoDBService interface {
 	NewDynamoDBService() *DynamoDBServiceImpl
+	Create(*model.Ocean) error
 }
 
 // NewDynamoDBService ...
-func (s *DynamoDBServiceImpl) NewDynamoDBService() *DynamoDBServiceImpl {
-	// 環境変数の指定
-	s.endpoint = os.Getenv("DYNAMODB_ENDPOINT")
-	s.tableName = os.Getenv("DYNAMODB_TABLE_NAME")
+func NewDynamoDBService() *DynamoDBServiceImpl {
+	fmt.Println("DYNAMODB_ENDPOINT:", os.Getenv("DYNAMODB_ENDPOINT"))
+	fmt.Println("DYNAMODB_TABLE_NAME:", os.Getenv("DYNAMODB_TABLE_NAME"))
+	s := &DynamoDBServiceImpl{
+		endpoint:  os.Getenv("DYNAMODB_ENDPOINT"),
+		tableName: os.Getenv("DYNAMODB_TABLE_NAME"),
+		dynamoDB:  nil,
+	}
 
 	// DynamoDBの設定
 	sess := session.Must(session.NewSession())
@@ -36,11 +43,13 @@ func (s *DynamoDBServiceImpl) NewDynamoDBService() *DynamoDBServiceImpl {
 	}
 
 	s.dynamoDB = dynamodb.New(sess, config)
+	fmt.Println("s.tableName:", s.tableName)
 	return s
 }
 
 // Create ...
-func (s *DynamoDBServiceImpl) Create() error {
+func (s *DynamoDBServiceImpl) Create(ocean *model.Ocean) error {
+	fmt.Println("s2.tableName:", s.tableName)
 	resp, err := s.dynamoDB.PutItem(&dynamodb.PutItemInput{
 		TableName: aws.String(s.tableName),
 		Item: map[string]*dynamodb.AttributeValue{

@@ -11,4 +11,4 @@ build: test
 ## Run Local
 .PHONY: run
 run: build
-	sam local invoke
+	sam local invoke -n ./env.json

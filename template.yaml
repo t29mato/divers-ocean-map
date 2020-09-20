@@ -27,7 +27,8 @@ Resources:
             Method: GET
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
-          PARAM1: VALUE
+          DYNAMODB_ENDPOINT: dummy
+          DYNAMODB_TABLE_NAME: !Ref UserDynamoDBTable
   OceanDynamoDBTable:
     Type: AWS::Serverless:SimpleTable
     Properties:
