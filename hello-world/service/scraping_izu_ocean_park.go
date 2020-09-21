@@ -38,28 +38,28 @@ func (s *ScrapingServiceIzuOceanParkImpl) Scrape() (*model.Ocean, error) {
 	ocean := model.NewOcean()
 
 	// DOM取得
-	doc, err := fetchDocument(s.ScrapingService.url)
+	doc, err := s.fetchDocument(s.ScrapingService.url)
 	if err != nil {
 		fmt.Println("HTMLファイルの読み込みに失敗しました。url =", s.ScrapingService.url)
 		return nil, err
 	}
 
 	// 水温取得
-	err = fetchTemperature(s.queryTemperature, doc, ocean)
+	err = s.fetchTemperature(s.queryTemperature, doc, ocean)
 	if err != nil {
 		fmt.Println("水温の取得に失敗")
 		return nil, err
 	}
 
 	// 透明度取得
-	err = fetchVisibility(s.queryVisibility, doc, ocean)
+	err = s.fetchVisibility(s.queryVisibility, doc, ocean)
 	if err != nil {
 		fmt.Println("透明度の取得に失敗")
 		return nil, err
 	}
 
 	// 測定日時取得
-	err = fetchMeasuredTime(s.queryMeasuredTime, doc, ocean)
+	err = s.fetchMeasuredTime(s.queryMeasuredTime, doc, ocean)
 	if err != nil {
 		fmt.Println("測定日時の取得に失敗")
 		return nil, err
@@ -68,7 +68,7 @@ func (s *ScrapingServiceIzuOceanParkImpl) Scrape() (*model.Ocean, error) {
 	return ocean, err
 }
 
-func fetchDocument(url string) (*goquery.Document, error) {
+func (s *ScrapingServiceIzuOceanParkImpl) fetchDocument(url string) (*goquery.Document, error) {
 	// 単体テスト実行時はローカルのHTMLファイルから取得する
 	if strings.Contains(url, "http") {
 		return goquery.NewDocument(url)
@@ -82,7 +82,7 @@ func fetchDocument(url string) (*goquery.Document, error) {
 	return goquery.NewDocumentFromReader(file)
 }
 
-func fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error {
+func (s *ScrapingServiceIzuOceanParkImpl) fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error {
 	temperatureHTML, _ := doc.Find(query).Html()
 	reg := regexp.MustCompile(`\d{1,2}`)
 	temperatures := reg.FindAllStringSubmatch(temperatureHTML, -1)
@@ -106,7 +106,7 @@ func fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) e
 	return nil
 }
 
-func fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error {
+func (s *ScrapingServiceIzuOceanParkImpl) fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error {
 	visibilityHTML, _ := doc.Find(query).Html()
 	reg := regexp.MustCompile(`\d{1,2}`)
 	visibilities := reg.FindAllStringSubmatch(visibilityHTML, -1)
@@ -131,7 +131,7 @@ func fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) er
 	return nil
 }
 
-func fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error {
+func (s *ScrapingServiceIzuOceanParkImpl) fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error {
 	MeasuredTimeHTML, _ := doc.Find(query).Html()
 	reg := regexp.MustCompile(`\d{1,2}`)
 	measuredTimes := reg.FindAllStringSubmatch(MeasuredTimeHTML, -1)
