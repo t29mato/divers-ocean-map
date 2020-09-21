@@ -4,14 +4,16 @@ import "time"
 
 // Ocean ...
 type Ocean struct {
+	Name         string `dynamodbav:"name"`
 	Temperature  Temperature
 	Visibility   Visibility
-	MeasuredTime time.Time
+	MeasuredTime time.Time `dynamodbav:"measured_time"`
 }
 
 // NewOcean ...
 func NewOcean() *Ocean {
 	return &Ocean{
+		Name: "",
 		Temperature: Temperature{
 			Min: -1,
 			Med: -1,
