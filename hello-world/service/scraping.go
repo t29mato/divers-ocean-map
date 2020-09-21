@@ -64,15 +64,14 @@ func fetchDocument(url string) (*goquery.Document, error) {
 	// 単体テスト実行時はローカルのHTMLファイルから取得する
 	if strings.Contains(url, "http") {
 		return goquery.NewDocument(url)
-	} else {
-		file, err := os.Open(url)
-		if err != nil {
-			fmt.Println("有効なファイルパスでありません。url =", url)
-			return nil, err
-		}
-		defer file.Close()
-		return goquery.NewDocumentFromReader(file)
 	}
+	file, err := os.Open(url)
+	if err != nil {
+		fmt.Println("有効なファイルパスでありません。url =", url)
+		return nil, err
+	}
+	defer file.Close()
+	return goquery.NewDocumentFromReader(file)
 }
 
 func fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error {
