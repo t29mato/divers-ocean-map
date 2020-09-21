@@ -21,7 +21,6 @@ type DynamoDBServiceImpl struct {
 
 // DynamoDBService ...
 type DynamoDBService interface {
-	NewDynamoDBService() *DynamoDBServiceImpl
 	Create(*model.Ocean) error
 }
 

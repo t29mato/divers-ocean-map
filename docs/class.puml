@@ -24,7 +24,6 @@ namespace model {
 
 namespace service {
     interface DynamoDBService  {
-        + NewDynamoDBService() *DynamoDBServiceImpl
         + Create( *model.Ocean) error
 
     }
@@ -55,6 +54,7 @@ namespace service {
     }
 }
 
+"service.DynamoDBService" <|-- "service.DynamoDBServiceImpl"
 "service.ScrapingService" <|-- "service.ScrapingServiceIzuOceanParkImpl"
 
 @enduml
