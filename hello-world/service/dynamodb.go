@@ -7,7 +7,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/google/uuid"
 
 	"hello-world/model"
 )
@@ -27,8 +26,6 @@ type DynamoDBService interface {
 
 // NewDynamoDBService ...
 func NewDynamoDBService() *DynamoDBServiceImpl {
-	fmt.Println("DYNAMODB_ENDPOINT:", os.Getenv("DYNAMODB_ENDPOINT"))
-	fmt.Println("DYNAMODB_TABLE_NAME:", os.Getenv("DYNAMODB_TABLE_NAME"))
 	s := &DynamoDBServiceImpl{
 		endpoint:  os.Getenv("DYNAMODB_ENDPOINT"),
 		tableName: os.Getenv("DYNAMODB_TABLE_NAME"),
@@ -43,24 +40,26 @@ func NewDynamoDBService() *DynamoDBServiceImpl {
 	}
 
 	s.dynamoDB = dynamodb.New(sess, config)
-	fmt.Println("s.tableName:", s.tableName)
+	fmt.Println("s.dynamoDB:", s.dynamoDB)
 	return s
 }
 
 // Create ...
 func (s *DynamoDBServiceImpl) Create(ocean *model.Ocean) error {
-	fmt.Println("s2.tableName:", s.tableName)
-	resp, err := s.dynamoDB.PutItem(&dynamodb.PutItemInput{
+	putItem := &dynamodb.PutItemInput{
 		TableName: aws.String(s.tableName),
 		Item: map[string]*dynamodb.AttributeValue{
-			"id": {
-				S: aws.String(uuid.New().String()),
+			"name": {
+				S: aws.String("伊豆海洋公園"),
+			},
+			"measured_time": {
+				S: aws.String("20200920"),
 			},
 		},
-	})
+	}
+	_, err := s.dynamoDB.PutItem(putItem)
 	if err != nil {
 		return err
 	}
-	fmt.Println(resp)
 	return nil
 }
