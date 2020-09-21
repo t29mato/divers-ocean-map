@@ -49,10 +49,10 @@ func (s *DynamoDBServiceImpl) Create(ocean *model.Ocean) error {
 	putItem := &dynamodb.PutItemInput{
 		TableName: aws.String(s.tableName),
 		Item: map[string]*dynamodb.AttributeValue{
-			"name": {
+			"Name": {
 				S: aws.String("伊豆海洋公園"),
 			},
-			"measured_time": {
+			"MeasuredTime": {
 				S: aws.String("20200920"),
 			},
 		},

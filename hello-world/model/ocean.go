@@ -4,10 +4,10 @@ import "time"
 
 // Ocean ...
 type Ocean struct {
-	Name         string `dynamodbav:"name"`
+	Name         string
 	Temperature  Temperature
 	Visibility   Visibility
-	MeasuredTime time.Time `dynamodbav:"measured_time"`
+	MeasuredTime time.Time
 }
 
 // NewOcean ...
@@ -30,14 +30,14 @@ func NewOcean() *Ocean {
 
 // Temperature ...
 type Temperature struct {
-	Min int `dynamodbav:"temperature_min"`
-	Med int `dynamodbav:"temperature_med"`
-	Max int `dynamodbav:"temperature_max"`
+	Min int
+	Med int
+	Max int
 }
 
 // Visibility ...
 type Visibility struct {
-	Min int `dynamodbav:"visibility_min"`
-	Med int `dynamodbav:"visibility_med"`
-	Max int `dynamodbav:"visibility_max"`
+	Min int
+	Med int
+	Max int
 }
