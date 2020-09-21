@@ -41,13 +41,17 @@ namespace service {
     }
     class ScrapingServiceImpl << (S,Aquamarine) >> {
         - url string
+        - db *DynamoDBServiceImpl
+
+        + Store(ocean *model.Ocean) error
 
     }
     class ScrapingServiceIzuOceanParkImpl << (S,Aquamarine) >> {
-        - ss *ScrapingServiceImpl
         - queryTemperature string
         - queryVisibility string
         - queryMeasuredTime string
+
+        + ScrapingService *ScrapingServiceImpl
 
         + Scrape() (*model.Ocean, error)
 

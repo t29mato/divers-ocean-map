@@ -12,4 +12,14 @@ type ScrapingService interface {
 // ScrapingServiceImpl ...
 type ScrapingServiceImpl struct {
 	url string
+	db  *DynamoDBServiceImpl
+}
+
+// Store ...
+func (s *ScrapingServiceImpl) Store(ocean *model.Ocean) error {
+	err := s.db.Create(ocean)
+	if err != nil {
+		return err
+	}
+	return nil
 }

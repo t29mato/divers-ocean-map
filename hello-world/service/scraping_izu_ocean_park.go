@@ -14,7 +14,7 @@ import (
 
 // ScrapingServiceIzuOceanParkImpl ...
 type ScrapingServiceIzuOceanParkImpl struct {
-	ss                *ScrapingServiceImpl
+	ScrapingService   *ScrapingServiceImpl
 	queryTemperature  string
 	queryVisibility   string
 	queryMeasuredTime string
@@ -23,8 +23,9 @@ type ScrapingServiceIzuOceanParkImpl struct {
 // NewScrapingServiceIzuOceanPark ...
 func NewScrapingServiceIzuOceanPark() *ScrapingServiceIzuOceanParkImpl {
 	return &ScrapingServiceIzuOceanParkImpl{
-		ss: &ScrapingServiceImpl{
+		ScrapingService: &ScrapingServiceImpl{
 			url: "https://iop-dc.com/",
+			db:  NewDynamoDBService(),
 		},
 		queryTemperature:  "#homeConditionDetail > dl > dd:nth-child(2)",
 		queryVisibility:   "#homeConditionDetail > dl > dd:nth-child(4)",
@@ -37,9 +38,9 @@ func (s *ScrapingServiceIzuOceanParkImpl) Scrape() (*model.Ocean, error) {
 	ocean := model.NewOcean()
 
 	// DOM取得
-	doc, err := fetchDocument(s.ss.url)
+	doc, err := fetchDocument(s.ScrapingService.url)
 	if err != nil {
-		fmt.Println("HTMLファイルの読み込みに失敗しました。url =", s.ss.url)
+		fmt.Println("HTMLファイルの読み込みに失敗しました。url =", s.ScrapingService.url)
 		return nil, err
 	}
 
