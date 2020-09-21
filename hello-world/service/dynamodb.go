@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 
 	"hello-world/model"
 )
@@ -46,18 +47,18 @@ func NewDynamoDBService() *DynamoDBServiceImpl {
 
 // Create ...
 func (s *DynamoDBServiceImpl) Create(ocean *model.Ocean) error {
+	av, err := dynamodbattribute.MarshalMap(ocean)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(av)
+
 	putItem := &dynamodb.PutItemInput{
 		TableName: aws.String(s.tableName),
-		Item: map[string]*dynamodb.AttributeValue{
-			"Name": {
-				S: aws.String("伊豆海洋公園"),
-			},
-			"MeasuredTime": {
-				S: aws.String("20200920"),
-			},
-		},
+		Item:      av,
 	}
-	_, err := s.dynamoDB.PutItem(putItem)
+	_, err = s.dynamoDB.PutItem(putItem)
 	if err != nil {
 		return err
 	}

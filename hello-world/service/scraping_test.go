@@ -19,7 +19,7 @@ func TestScrapeIOP(t *testing.T) {
 	fmt.Println(url)
 	ocean, _ := ss.Scrape(url)
 	assert.Equal(t, &model.Ocean{
-		Name: "",
+		Name: "伊豆海洋公園",
 		Temperature: model.Temperature{
 			Min: 21,
 			Med: -1,
