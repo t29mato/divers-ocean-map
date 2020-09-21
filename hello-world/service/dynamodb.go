@@ -52,11 +52,10 @@ func (s *DynamoDBServiceImpl) Create(ocean *model.Ocean) error {
 		return err
 	}
 
-	fmt.Println(av)
-
 	putItem := &dynamodb.PutItemInput{
-		TableName: aws.String(s.tableName),
-		Item:      av,
+		TableName:           aws.String(s.tableName),
+		Item:                av,
+		ConditionExpression: aws.String("attribute_not_exists(LocationName) AND attribute_not_exists(MeasuredTime)"),
 	}
 	_, err = s.dynamoDB.PutItem(putItem)
 	if err != nil {

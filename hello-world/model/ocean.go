@@ -4,7 +4,7 @@ import "time"
 
 // Ocean ...
 type Ocean struct {
-	Name         string
+	LocationName string
 	Temperature  Temperature
 	Visibility   Visibility
 	MeasuredTime time.Time
@@ -13,7 +13,7 @@ type Ocean struct {
 // NewOcean ...
 func NewOcean() *Ocean {
 	return &Ocean{
-		Name: "伊豆海洋公園",
+		LocationName: "伊豆海洋公園",
 		Temperature: Temperature{
 			Min: -1,
 			Med: -1,
