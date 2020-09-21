@@ -30,14 +30,14 @@ func NewOcean() *Ocean {
 
 // Temperature ...
 type Temperature struct {
-	Min int
-	Med int
-	Max int
+	Min int `dynamodbav:"temperature_min"`
+	Med int `dynamodbav:"temperature_med"`
+	Max int `dynamodbav:"temperature_max"`
 }
 
 // Visibility ...
 type Visibility struct {
-	Min int
-	Med int
-	Max int
+	Min int `dynamodbav:"visibility_min"`
+	Med int `dynamodbav:"visibility_med"`
+	Max int `dynamodbav:"visibility_max"`
 }
