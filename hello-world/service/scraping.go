@@ -17,7 +17,7 @@ type ScrapingServiceImpl struct {
 
 // Store ...
 func (s *ScrapingServiceImpl) Store(ocean *model.Ocean) error {
-	err := s.db.Create(ocean)
+	err := s.db.CreateIfNotExist(ocean)
 	if err != nil {
 		return err
 	}

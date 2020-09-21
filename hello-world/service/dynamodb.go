@@ -21,7 +21,7 @@ type DynamoDBServiceImpl struct {
 
 // DynamoDBService ...
 type DynamoDBService interface {
-	Create(*model.Ocean) error
+	CreateIfNotExist(*model.Ocean) error
 }
 
 // NewDynamoDBService ...
@@ -44,8 +44,8 @@ func NewDynamoDBService() *DynamoDBServiceImpl {
 	return s
 }
 
-// Create ...
-func (s *DynamoDBServiceImpl) Create(ocean *model.Ocean) error {
+// CreateIfNotExist パーティションキーとレンジキーの両方が存在しない場合のみ新規レコード作成
+func (s *DynamoDBServiceImpl) CreateIfNotExist(ocean *model.Ocean) error {
 	av, err := dynamodbattribute.MarshalMap(ocean)
 	if err != nil {
 		return err

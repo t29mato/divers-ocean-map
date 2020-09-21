@@ -24,7 +24,7 @@ namespace model {
 
 namespace service {
     interface DynamoDBService  {
-        + Create( *model.Ocean) error
+        + CreateIfNotExist( *model.Ocean) error
 
     }
     class DynamoDBServiceImpl << (S,Aquamarine) >> {
@@ -32,7 +32,7 @@ namespace service {
         - tableName string
         - dynamoDB *dynamodb.DynamoDB
 
-        + Create(ocean *model.Ocean) error
+        + CreateIfNotExist(ocean *model.Ocean) error
 
     }
     interface ScrapingService  {
