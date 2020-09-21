@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"hello-world/model"
 	"os"
 	"testing"
@@ -10,14 +9,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var ss ScrapingServiceImpl
-
 // TestScrape ...
 func TestScrapeIOP(t *testing.T) {
+	s := NewScrapingServiceIzuOceanPark()
 	pwd, _ := os.Getwd()
 	url := pwd + "/testdata/" + t.Name() + "_20200913.html"
-	fmt.Println(url)
-	ocean, _ := ss.Scrape(url)
+	s.ss.url = url
+	ocean, _ := s.Scrape()
 	assert.Equal(t, &model.Ocean{
 		LocationName: "伊豆海洋公園",
 		Temperature: model.Temperature{

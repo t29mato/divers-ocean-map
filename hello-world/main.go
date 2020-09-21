@@ -5,12 +5,11 @@ import (
 	"hello-world/service"
 )
 
-var scrapingService = service.NewScrapingService()
+var scrapingService = service.NewScrapingServiceIzuOceanPark()
 var dynamodbService = service.NewDynamoDBService()
 
 func main() {
-	url := "https://iop-dc.com/"
-	ocean, err := scrapingService.Scrape(url)
+	ocean, err := scrapingService.Scrape()
 	if err != nil {
 		fmt.Println("スクレイピングの途中で失敗しました", err)
 	}

@@ -1,0 +1,60 @@
+@startuml
+namespace model {
+    class Ocean << (S,Aquamarine) >> {
+        + LocationName string
+        + Temperature Temperature
+        + Visibility Visibility
+        + MeasuredTime time.Time
+
+    }
+    class Temperature << (S,Aquamarine) >> {
+        + Min int
+        + Med int
+        + Max int
+
+    }
+    class Visibility << (S,Aquamarine) >> {
+        + Min int
+        + Med int
+        + Max int
+
+    }
+}
+
+
+namespace service {
+    interface DynamoDBService  {
+        + NewDynamoDBService() *DynamoDBServiceImpl
+        + Create( *model.Ocean) error
+
+    }
+    class DynamoDBServiceImpl << (S,Aquamarine) >> {
+        - endpoint string
+        - tableName string
+        - dynamoDB *dynamodb.DynamoDB
+
+        + Create(ocean *model.Ocean) error
+
+    }
+    interface ScrapingService  {
+        + Scrape() (*model.Ocean, error)
+
+    }
+    class ScrapingServiceImpl << (S,Aquamarine) >> {
+        - url string
+
+    }
+    class ScrapingServiceIzuOceanParkImpl << (S,Aquamarine) >> {
+        - ss *ScrapingServiceImpl
+        - queryTemperature string
+        - queryVisibility string
+        - queryMeasuredTime string
+
+        + Scrape() (*model.Ocean, error)
+
+    }
+}
+
+"service.ScrapingService" <|-- "service.ScrapingServiceIzuOceanParkImpl"
+
+@enduml
