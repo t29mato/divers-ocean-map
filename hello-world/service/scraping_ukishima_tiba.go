@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"golang.org/x/text/width"
 )
 
 // ScrapingServiceUkishimaTibaImpl ...
@@ -92,16 +93,18 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchTemperature(query string, doc *go
 	temperatureHTML := reg.FindAllStringSubmatch(articleHTML, -1)
 	reg = regexp.MustCompile(`[0-9０-９]{1,2}`)
 	temperatures := reg.FindAllStringSubmatch(temperatureHTML[0][0], -1)
-	min, err := strconv.Atoi(temperatures[0][0])
+
+	min, err := strconv.Atoi(width.Narrow.String(temperatures[0][0]))
 	if err != nil {
 		fmt.Println("水温1の数値変換に失敗, 変換前=", temperatures[0][0])
 		return err
 	}
+
 	switch len(temperatures) {
 	case 1:
 		ocean.Temperature.Med = min
 	case 2:
-		max, err := strconv.Atoi(temperatures[1][0])
+		max, err := strconv.Atoi(width.Narrow.String(temperatures[1][0]))
 		if err != nil {
 			fmt.Println("水温2の数値変換に失敗, 変換前=", temperatures[1][0])
 			return err
@@ -113,10 +116,11 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchTemperature(query string, doc *go
 }
 
 func (s *ScrapingServiceUkishimaTibaImpl) fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error {
-	visibilityHTML, _ := doc.Find(query).Html()
-	reg := regexp.MustCompile(`\d{1,2}`)
-	visibilities := reg.FindAllStringSubmatch(visibilityHTML, -1)
-
+	articleHTML, _ := doc.Find(query).Html()
+	reg := regexp.MustCompile(`透明度[\s\S]*ｍ</`)
+	visibilityHTML := reg.FindAllStringSubmatch(articleHTML, -1)
+	reg = regexp.MustCompile(`[0-9０-９]{1,2}`)
+	visibilities := reg.FindAllStringSubmatch(visibilityHTML[0][0], -1)
 	min, err := strconv.Atoi(visibilities[0][0])
 	if err != nil {
 		fmt.Println("透明度1の数値変換に失敗, 変換前=", visibilities[0][0])

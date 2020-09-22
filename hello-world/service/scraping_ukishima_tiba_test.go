@@ -17,17 +17,17 @@ func TestScrapeUkishimaTiba(t *testing.T) {
 	s.ScrapingService.url = url
 	ocean, _ := s.Scrape()
 	assert.Equal(t, &model.Ocean{
-		LocationName: "伊豆海洋公園",
+		LocationName: "浮島 (千葉県勝山市)",
 		Temperature: model.Temperature{
-			Min: 21,
+			Min: 24,
 			Med: -1,
-			Max: 27,
+			Max: 26,
 		},
 		Visibility: model.Visibility{
-			Min: 10,
+			Min: 8,
 			Med: -1,
-			Max: 20,
+			Max: 10,
 		},
-		MeasuredTime: time.Date(2020, time.September, 13, 0, 0, 0, 0, time.UTC),
+		MeasuredTime: time.Date(2020, time.September, 21, 0, 0, 0, 0, time.UTC),
 	}, ocean)
 }
