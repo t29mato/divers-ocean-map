@@ -6,6 +6,8 @@ import (
 )
 
 func main() {
+	fmt.Println("スクレイピング開始")
+
 	// TODO: goroutine 使う
 	scrapingServiceIzuOceanPark := service.NewScrapingServiceIzuOceanPark()
 	oceanIzuOceanPark, err := scrapingServiceIzuOceanPark.Scrape()
@@ -28,4 +30,6 @@ func main() {
 	if err != nil {
 		fmt.Println("浮島 (千葉県勝山市)のDBへの挿入で失敗", err)
 	}
+
+	fmt.Println("スクレイピング終了")
 }
