@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"os"
 	"regexp"
 	"scraping/logging"
@@ -42,28 +41,28 @@ func (s *ScrapingServiceUkishimaTibaImpl) Scrape() (*model.Ocean, error) {
 	// DOM取得
 	doc, err := s.fetchDocument(s.ScrapingService.url)
 	if err != nil {
-		fmt.Println("HTMLファイルの読み込みに失敗しました。url =", s.ScrapingService.url)
+		s.ScrapingService.logging.Info("HTMLファイルの読み込みに失敗しました。url =", s.ScrapingService.url)
 		return nil, err
 	}
 
 	// 水温取得
 	err = s.fetchTemperature("div.entry-content", doc, ocean)
 	if err != nil {
-		fmt.Println("水温の取得に失敗")
+		s.ScrapingService.logging.Info("水温の取得に失敗")
 		return nil, err
 	}
 
 	// 透明度取得
 	err = s.fetchVisibility("div.entry-content", doc, ocean)
 	if err != nil {
-		fmt.Println("透明度の取得に失敗")
+		s.ScrapingService.logging.Info("透明度の取得に失敗")
 		return nil, err
 	}
 
 	// 測定日時取得
 	err = s.fetchMeasuredTime("footer > span.posted-on > a:nth-child(2) > time.entry-date.published", doc, ocean)
 	if err != nil {
-		fmt.Println("測定日時の取得に失敗")
+		s.ScrapingService.logging.Info("測定日時の取得に失敗")
 		return nil, err
 	}
 
@@ -76,13 +75,13 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchDocument(url string) (*goquery.Do
 		doc, _ := goquery.NewDocument(url)
 		// トップページには透明度情報がないので、トップページから最新の記事のURLを取得する
 		latestArticleURL, _ := doc.Find("#post-9 > div > div:nth-child(5) > div > ul > li:nth-child(1) > div.kaiyou_thumb > a").Attr("href")
-		fmt.Println("latestArticleURL:", latestArticleURL)
+		s.ScrapingService.logging.Info("latestArticleURL:", latestArticleURL)
 		latestDoc, _ := goquery.NewDocument(latestArticleURL)
 		return latestDoc, nil
 	}
 	file, err := os.Open(url)
 	if err != nil {
-		fmt.Println("有効なファイルパスでありません。url =", url)
+		s.ScrapingService.logging.Info("有効なファイルパスでありません。url =", url)
 		return nil, err
 	}
 	defer file.Close()
@@ -98,7 +97,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchTemperature(query string, doc *go
 
 	min, err := convertIntFromFullWidthString(&temperatures[0][0])
 	if err != nil {
-		fmt.Println("水温1の数値変換に失敗, 変換前=", temperatures[0][0])
+		s.ScrapingService.logging.Info("水温1の数値変換に失敗, 変換前=", temperatures[0][0])
 		return err
 	}
 
@@ -108,7 +107,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchTemperature(query string, doc *go
 	case 2:
 		max, err := convertIntFromFullWidthString(&temperatures[1][0])
 		if err != nil {
-			fmt.Println("水温2の数値変換に失敗, 変換前=", temperatures[1][0])
+			s.ScrapingService.logging.Info("水温2の数値変換に失敗, 変換前=", temperatures[1][0])
 			return err
 		}
 		ocean.Temperature.Min = min
@@ -125,7 +124,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchVisibility(query string, doc *goq
 	visibilities := reg.FindAllStringSubmatch(visibilityHTML[0][0], -1)
 	min, err := convertIntFromFullWidthString(&visibilities[0][0])
 	if err != nil {
-		fmt.Println("透明度1の数値変換に失敗, 変換前=", visibilities[0][0])
+		s.ScrapingService.logging.Info("透明度1の数値変換に失敗, 変換前=", visibilities[0][0])
 		return err
 	}
 	switch len(visibilities) {
@@ -134,7 +133,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchVisibility(query string, doc *goq
 	case 2:
 		max, err := convertIntFromFullWidthString(&visibilities[1][0])
 		if err != nil {
-			fmt.Println("透明度2の数値変換に失敗, 変換前=", visibilities[1][0])
+			s.ScrapingService.logging.Info("透明度2の数値変換に失敗, 変換前=", visibilities[1][0])
 			return err
 		}
 		ocean.Visibility.Min = min
@@ -157,7 +156,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchMeasuredTime(query string, doc *g
 	min, err := strconv.Atoi(dates[4][0])
 	sec, err := strconv.Atoi(dates[5][0])
 	if err != nil {
-		fmt.Println("datetimeの変換に失敗")
+		s.ScrapingService.logging.Info("datetimeの変換に失敗")
 		return err
 	}
 	ocean.MeasuredTime = time.Date(year, time.Month(month), day, hour, min, sec, 0, time.Local)

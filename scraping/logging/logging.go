@@ -4,7 +4,7 @@ import "fmt"
 
 // OceanLogging ...
 type OceanLogging interface {
-	Info(message []string)
+	Info(message ...string)
 }
 
 // OceanLoggingImpl ...
@@ -20,6 +20,6 @@ func NewOceanLoggingImpl(requestID string) *OceanLoggingImpl {
 }
 
 // Info ...
-func (o *OceanLoggingImpl) Info(message []string) {
-	fmt.Println(message)
+func (o *OceanLoggingImpl) Info(message ...string) {
+	fmt.Printf("[INFO] [%s] %s\n", o.requestID, message)
 }
