@@ -2,9 +2,9 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "sam-app"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-olff87oxb3a1"
-s3_prefix = "sam-app"
+stack_name = "divers-ocean-map-app"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-whzr82cimln"
+s3_prefix = "divers-ocean-map-app"
 region = "ap-northeast-1"
 profile = "t2k"
 confirm_changeset = true
