@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -46,6 +47,7 @@ func NewDynamoDBService() *DynamoDBServiceImpl {
 func (s *DynamoDBServiceImpl) CreateIfNotExist(ocean *model.Ocean) error {
 	av, err := dynamodbattribute.MarshalMap(ocean)
 	if err != nil {
+		fmt.Println("DynamoDBのAttributeと構造体のマップに失敗")
 		return err
 	}
 
@@ -56,6 +58,7 @@ func (s *DynamoDBServiceImpl) CreateIfNotExist(ocean *model.Ocean) error {
 	}
 	_, err = s.dynamoDB.PutItem(putItem)
 	if err != nil {
+		fmt.Println("DynamoDBへのデータ更新に失敗")
 		return err
 	}
 	return nil

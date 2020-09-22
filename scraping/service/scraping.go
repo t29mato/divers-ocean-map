@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"scraping/model"
 	"strconv"
 
@@ -22,6 +23,7 @@ type ScrapingServiceImpl struct {
 func (s *ScrapingServiceImpl) Store(ocean *model.Ocean) error {
 	err := s.db.CreateIfNotExist(ocean)
 	if err != nil {
+		fmt.Println("データの永久保存に失敗")
 		return err
 	}
 	return nil
