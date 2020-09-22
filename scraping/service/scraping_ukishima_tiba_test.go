@@ -2,6 +2,7 @@ package service
 
 import (
 	"os"
+	"scraping/logging"
 	"scraping/model"
 	"testing"
 	"time"
@@ -11,7 +12,8 @@ import (
 
 // TestScrape ...
 func TestScrapeUkishimaTiba(t *testing.T) {
-	s := NewScrapingServiceUkishimaTiba()
+	logging := logging.NewOceanLoggingImpl("66936b3e-08e3-404b-815d-ddbccfb03cc9")
+	s := NewScrapingServiceUkishimaTiba(logging)
 	pwd, _ := os.Getwd()
 	url := pwd + "/testdata/" + t.Name() + "_20200921.html"
 	s.ScrapingService.url = url

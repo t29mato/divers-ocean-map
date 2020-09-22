@@ -1,4 +1,19 @@
 @startuml
+namespace logging {
+    interface OceanLogging  {
+        + Info(message []string) 
+
+    }
+    class OceanLoggingImpl << (S,Aquamarine) >> {
+        - requestID string
+
+        + Info(message []string) 
+
+    }
+}
+
+"logging.OceanLogging" <|-- "logging.OceanLoggingImpl"
+
 namespace model {
     class Ocean << (S,Aquamarine) >> {
         + LocationName string
@@ -42,6 +57,7 @@ namespace service {
     class ScrapingServiceImpl << (S,Aquamarine) >> {
         - url string
         - db *DynamoDBServiceImpl
+        - logging *logging.OceanLogging
 
         + Store(ocean *model.Ocean) error
 
@@ -53,6 +69,26 @@ namespace service {
 
         + ScrapingService *ScrapingServiceImpl
 
+        - fetchDocument(url string) (*goquery.Document, error)
+        - fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error
+        - fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error
+        - fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error
+
+        + Scrape() (*model.Ocean, error)
+
+    }
+    class ScrapingServiceUkishimaTibaImpl << (S,Aquamarine) >> {
+        - queryTemperature string
+        - queryVisibility string
+        - queryMeasuredTime string
+
+        + ScrapingService *ScrapingServiceImpl
+
+        - fetchDocument(url string) (*goquery.Document, error)
+        - fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error
+        - fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error
+        - fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error
+
         + Scrape() (*model.Ocean, error)
 
     }
@@ -60,5 +96,6 @@ namespace service {
 
 "service.DynamoDBService" <|-- "service.DynamoDBServiceImpl"
 "service.ScrapingService" <|-- "service.ScrapingServiceIzuOceanParkImpl"
+"service.ScrapingService" <|-- "service.ScrapingServiceUkishimaTibaImpl"
 
 @enduml

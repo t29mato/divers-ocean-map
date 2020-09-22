@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"scraping/logging"
 	"scraping/model"
 	"strconv"
 	"strings"
@@ -21,11 +22,12 @@ type ScrapingServiceUkishimaTibaImpl struct {
 }
 
 // NewScrapingServiceUkishimaTiba ...
-func NewScrapingServiceUkishimaTiba() *ScrapingServiceUkishimaTibaImpl {
+func NewScrapingServiceUkishimaTiba(logging *logging.OceanLoggingImpl) *ScrapingServiceUkishimaTibaImpl {
 	return &ScrapingServiceUkishimaTibaImpl{
 		ScrapingService: &ScrapingServiceImpl{
-			url: "http://paroparo.jp",
-			db:  NewDynamoDBService(),
+			url:     "http://paroparo.jp",
+			db:      NewDynamoDBService(),
+			logging: logging,
 		},
 		queryTemperature:  "#homeConditionDetail > dl > dd:nth-child(2)",
 		queryVisibility:   "#homeConditionDetail > dl > dd:nth-child(4)",

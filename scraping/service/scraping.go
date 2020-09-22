@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"scraping/logging"
 	"scraping/model"
 	"strconv"
 
@@ -15,8 +16,9 @@ type ScrapingService interface {
 
 // ScrapingServiceImpl ...
 type ScrapingServiceImpl struct {
-	url string
-	db  *DynamoDBServiceImpl
+	url     string
+	db      *DynamoDBServiceImpl
+	logging *logging.OceanLoggingImpl
 }
 
 // Store ...

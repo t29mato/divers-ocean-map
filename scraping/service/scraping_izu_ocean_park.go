@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"scraping/logging"
 	"scraping/model"
 	"strconv"
 	"strings"
@@ -21,11 +22,12 @@ type ScrapingServiceIzuOceanParkImpl struct {
 }
 
 // NewScrapingServiceIzuOceanPark ...
-func NewScrapingServiceIzuOceanPark() *ScrapingServiceIzuOceanParkImpl {
+func NewScrapingServiceIzuOceanPark(logging *logging.OceanLoggingImpl) *ScrapingServiceIzuOceanParkImpl {
 	return &ScrapingServiceIzuOceanParkImpl{
 		ScrapingService: &ScrapingServiceImpl{
-			url: "https://iop-dc.com/",
-			db:  NewDynamoDBService(),
+			url:     "https://iop-dc.com/",
+			db:      NewDynamoDBService(),
+			logging: logging,
 		},
 		queryTemperature:  "#homeConditionDetail > dl > dd:nth-child(2)",
 		queryVisibility:   "#homeConditionDetail > dl > dd:nth-child(4)",

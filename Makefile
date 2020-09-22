@@ -11,4 +11,4 @@ build: test
 ## Run Local
 .PHONY: run
 run: build
-	sam local invoke -n ./env.json
+	echo '{"id":"66936b3e-08e3-404b-815d-ddbccfb03cc9"}' | sam local invoke -n ./env.json
