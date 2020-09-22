@@ -20,32 +20,43 @@ Resources:
       Policies: AmazonDynamoDBFullAccess
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
       Events:
-        CatchAll:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+        Timer:
+          Type: Schedule
           Properties:
-            Path: /hello
-            Method: GET
+            Schedule: rate(10 minutes)
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           DYNAMODB_ENDPOINT: dummy
-          DYNAMODB_TABLE_NAME: !Ref UserDynamoDBTable
+          DYNAMODB_TABLE_NAME: !Ref OceanDynamoDBTable
   OceanDynamoDBTable:
-    Type: AWS::Serverless:SimpleTable
+    Type: AWS::DynamoDB::Table
     Properties:
-      PrimaryKey:
-        Name: Id
-        Type: Number
+      AttributeDefinitions:
+        -
+          AttributeName: "LocationName"
+          AttributeType: "S"
+        -
+          AttributeName: "MeasuredTime"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "LocationName"
+          KeyType: "HASH"
+        - 
+          AttributeName: "MeasuredTime"
+          KeyType: "RANGE"        
       ProvisionedThroughput:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
+      TableName: "Oceans"
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldAPI:
-    Description: "API Gateway endpoint URL for Prod environment for First Function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  # HelloWorldAPI:
+    # Description: "API Gateway endpoint URL for Prod environment for First Function"
+    # Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
   ScrapingFunction:
     Description: "First Lambda Function ARN"
     Value: !GetAtt ScrapingFunction.Arn
