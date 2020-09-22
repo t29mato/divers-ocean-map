@@ -72,6 +72,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchDocument(url string) (*goquery.Do
 	// 単体テスト実行時はローカルのHTMLファイルから取得する
 	if strings.Contains(url, "http") {
 		doc, _ := goquery.NewDocument(url)
+		// トップページには透明度情報がないので、トップページから最新の記事のURLを取得する
 		latestArticleURL, _ := doc.Find("#post-9 > div > div:nth-child(5) > div > ul > li:nth-child(1) > div.kaiyou_thumb > a").Attr("href")
 		fmt.Println("latestArticleURL:", latestArticleURL)
 		latestDoc, _ := goquery.NewDocument(latestArticleURL)
