@@ -6,6 +6,6 @@ require (
 	golang.org/x/text v0.3.0
 )
 
-module hello-world
+module scraping
 
 go 1.15

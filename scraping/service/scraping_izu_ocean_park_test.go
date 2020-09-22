@@ -1,8 +1,8 @@
 package service
 
 import (
-	"hello-world/model"
 	"os"
+	"scraping/model"
 	"testing"
 	"time"
 

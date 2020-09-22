@@ -2,9 +2,9 @@ package service
 
 import (
 	"fmt"
-	"hello-world/model"
 	"os"
 	"regexp"
+	"scraping/model"
 	"strconv"
 	"strings"
 	"time"

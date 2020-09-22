@@ -3,7 +3,7 @@
 [クラス図](./docs/class.puml)
 
 ```
-$ goplantuml -recursive ./hello-world > docs/class.puml
+$ goplantuml -recursive ./scraping > docs/class.puml
 ```
 
 
@@ -15,7 +15,7 @@ This is a sample template for divers-ocean-map - Below is a brief explanation of
 .
 ├── Makefile                    <-- Make to automate build
 ├── README.md                   <-- This instructions file
-├── hello-world                 <-- Source code for a lambda function
+├── scraping                 <-- Source code for a lambda function
 │   ├── main.go                 <-- Lambda function code
 │   └── main_test.go            <-- Unit tests
 └── template.yaml
@@ -97,7 +97,7 @@ You can find your API Gateway Endpoint URL in the output values displayed after 
 We use `testing` package that is built-in in Golang and you can simply run the following command to run our tests:
 
 ```shell
-go test -v ./hello-world/
+go test -v ./scraping/
 ```
 # Appendix
 

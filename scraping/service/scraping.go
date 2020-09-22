@@ -1,7 +1,7 @@
 package service
 
 import (
-	"hello-world/model"
+	"scraping/model"
 	"strconv"
 
 	"golang.org/x/text/width"

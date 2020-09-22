@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"hello-world/service"
+	"scraping/service"
 )
 
 func main() {

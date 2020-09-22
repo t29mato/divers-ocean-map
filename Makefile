@@ -1,7 +1,7 @@
 ## Test
 .PHONY: test
 test:
-	cd hello-world && go test hello-world/...
+	cd scraping && go test scraping/...
 
 ## Build
 .PHONY: build
