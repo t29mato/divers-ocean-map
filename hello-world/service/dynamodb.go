@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -40,7 +39,6 @@ func NewDynamoDBService() *DynamoDBServiceImpl {
 	}
 
 	s.dynamoDB = dynamodb.New(sess, config)
-	fmt.Println("s.dynamoDB:", s.dynamoDB)
 	return s
 }
 
