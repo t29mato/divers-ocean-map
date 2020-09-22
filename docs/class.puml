@@ -1,13 +1,13 @@
 @startuml
 namespace logging {
     interface OceanLogging  {
-        + Info(message []string) 
+        + Info(message ...string) 
 
     }
     class OceanLoggingImpl << (S,Aquamarine) >> {
         - requestID string
 
-        + Info(message []string) 
+        + Info(message ...string) 
 
     }
 }
@@ -43,7 +43,6 @@ namespace service {
 
     }
     class DynamoDBServiceImpl << (S,Aquamarine) >> {
-        - endpoint string
         - tableName string
         - dynamoDB *dynamodb.DynamoDB
 
@@ -57,7 +56,7 @@ namespace service {
     class ScrapingServiceImpl << (S,Aquamarine) >> {
         - url string
         - db *DynamoDBServiceImpl
-        - logging *logging.OceanLogging
+        - logging *logging.OceanLoggingImpl
 
         + Store(ocean *model.Ocean) error
 
