@@ -24,7 +24,7 @@ type ScrapingServiceUkishimaTibaImpl struct {
 func NewScrapingServiceUkishimaTiba() *ScrapingServiceUkishimaTibaImpl {
 	return &ScrapingServiceUkishimaTibaImpl{
 		ScrapingService: &ScrapingServiceImpl{
-			url: "http://paroparo.jp/wp-json/wp/v2/posts?per_page=1",
+			url: "http://paroparo.jp",
 			db:  NewDynamoDBService(),
 		},
 		queryTemperature:  "#homeConditionDetail > dl > dd:nth-child(2)",
