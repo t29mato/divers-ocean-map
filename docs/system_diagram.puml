@@ -1,0 +1,44 @@
+@startuml system_diagram
+
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/master/dist
+!includeurl AWSPuml/AWSCommon.puml
+!includeurl AWSPuml/Compute/Lambda.puml
+!includeurl AWSPuml/Database/DynamoDBTable.puml
+!includeurl AWSPuml/Database/DynamoDBAttribute.puml
+!includeurl AWSPuml/ManagementAndGovernance/CloudWatch.puml
+!includeurl AWSPuml/General/Users.puml
+!includeurl AWSPuml/NetworkingAndContentDelivery/APIGateway2.puml
+!includeurl AWSPuml/AWSSimplified.puml
+
+Lambda(scrapingLambda, "Scraping Cron", "")
+APIGateway2(apiGateway, "API Gateway", "")
+Lambda(fetchLambda, "Fetch Ocean", "")
+
+DynamoDBTable(dynamoDBTable, "OceanDB", "")
+DynamoDBAttribute(visibility, "Water Visibility", "")
+DynamoDBAttribute(temperature, "Water Temperature", "")
+DynamoDBAttribute(measuredTime, "Measured Time", "")
+
+CloudWatch(cloudWatch, "Logs", "")
+Users(users, "Users", "")
+
+users --> apiGateway : u1
+apiGateway -> fetchLambda: u2
+fetchLambda -> dynamoDBTable: u3
+
+cloud DivingPoint1
+cloud DivingPoint2
+cloud DivingPoint3
+
+DivingPoint1 <-- scrapingLambda : s1. Scrape
+DivingPoint2 <-- scrapingLambda : s1. Scrape
+DivingPoint3 <-- scrapingLambda : s1. Scrape
+
+dynamoDBTable <- scrapingLambda : s2. Store
+scrapingLambda -> cloudWatch : s3. Log
+
+dynamoDBTable -- visibility
+dynamoDBTable -- temperature
+dynamoDBTable -- measuredTime
+
+@enduml
