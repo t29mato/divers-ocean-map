@@ -36,6 +36,7 @@ func NewScrapingServiceIzuOceanPark(logging *logging.OceanLoggingImpl) *Scraping
 
 // Scrape ...
 func (s *ScrapingServiceIzuOceanParkImpl) Scrape() (*model.Ocean, error) {
+	s.ScrapingService.logging.Info("伊豆海洋公園のスクレイピング開始")
 	ocean := model.NewOcean("伊豆海洋公園")
 
 	// DOM取得
@@ -66,6 +67,7 @@ func (s *ScrapingServiceIzuOceanParkImpl) Scrape() (*model.Ocean, error) {
 		return nil, err
 	}
 
+	s.ScrapingService.logging.Info("伊豆海洋公園のスクレイピング終了")
 	return ocean, err
 }
 
