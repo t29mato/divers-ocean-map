@@ -2,6 +2,9 @@ package service
 
 import (
 	"hello-world/model"
+	"strconv"
+
+	"golang.org/x/text/width"
 )
 
 // ScrapingService ...
@@ -22,4 +25,9 @@ func (s *ScrapingServiceImpl) Store(ocean *model.Ocean) error {
 		return err
 	}
 	return nil
+}
+
+// convertIntFromFullWidthString
+func convertIntFromFullWidthString(s *string) (int, error) {
+	return strconv.Atoi(width.Narrow.String(*s))
 }

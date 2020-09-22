@@ -28,6 +28,6 @@ func TestScrapeUkishimaTiba(t *testing.T) {
 			Med: -1,
 			Max: 10,
 		},
-		MeasuredTime: time.Date(2020, time.September, 21, 0, 0, 0, 0, time.UTC),
+		MeasuredTime: time.Date(2020, time.September, 21, 14, 49, 6, 0, time.Local),
 	}, ocean)
 }

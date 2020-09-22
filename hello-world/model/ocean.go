@@ -11,9 +11,9 @@ type Ocean struct {
 }
 
 // NewOcean ...
-func NewOcean() *Ocean {
+func NewOcean(locationName string) *Ocean {
 	return &Ocean{
-		LocationName: "伊豆海洋公園",
+		LocationName: locationName,
 		Temperature: Temperature{
 			Min: -1,
 			Med: -1,

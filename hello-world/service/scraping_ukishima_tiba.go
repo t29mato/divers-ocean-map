@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"golang.org/x/text/width"
 )
 
 // ScrapingServiceUkishimaTibaImpl ...
@@ -36,7 +35,7 @@ func NewScrapingServiceUkishimaTiba() *ScrapingServiceUkishimaTibaImpl {
 
 // Scrape ...
 func (s *ScrapingServiceUkishimaTibaImpl) Scrape() (*model.Ocean, error) {
-	ocean := model.NewOcean()
+	ocean := model.NewOcean("浮島 (千葉県勝山市)")
 
 	// DOM取得
 	doc, err := s.fetchDocument(s.ScrapingService.url)
@@ -53,14 +52,14 @@ func (s *ScrapingServiceUkishimaTibaImpl) Scrape() (*model.Ocean, error) {
 	}
 
 	// 透明度取得
-	err = s.fetchVisibility(s.queryVisibility, doc, ocean)
+	err = s.fetchVisibility("div.entry-content", doc, ocean)
 	if err != nil {
 		fmt.Println("透明度の取得に失敗")
 		return nil, err
 	}
 
 	// 測定日時取得
-	err = s.fetchMeasuredTime(s.queryMeasuredTime, doc, ocean)
+	err = s.fetchMeasuredTime("footer > span.posted-on > a:nth-child(2) > time.entry-date.published", doc, ocean)
 	if err != nil {
 		fmt.Println("測定日時の取得に失敗")
 		return nil, err
@@ -94,7 +93,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchTemperature(query string, doc *go
 	reg = regexp.MustCompile(`[0-9０-９]{1,2}`)
 	temperatures := reg.FindAllStringSubmatch(temperatureHTML[0][0], -1)
 
-	min, err := strconv.Atoi(width.Narrow.String(temperatures[0][0]))
+	min, err := convertIntFromFullWidthString(&temperatures[0][0])
 	if err != nil {
 		fmt.Println("水温1の数値変換に失敗, 変換前=", temperatures[0][0])
 		return err
@@ -104,7 +103,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchTemperature(query string, doc *go
 	case 1:
 		ocean.Temperature.Med = min
 	case 2:
-		max, err := strconv.Atoi(width.Narrow.String(temperatures[1][0]))
+		max, err := convertIntFromFullWidthString(&temperatures[1][0])
 		if err != nil {
 			fmt.Println("水温2の数値変換に失敗, 変換前=", temperatures[1][0])
 			return err
@@ -121,7 +120,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchVisibility(query string, doc *goq
 	visibilityHTML := reg.FindAllStringSubmatch(articleHTML, -1)
 	reg = regexp.MustCompile(`[0-9０-９]{1,2}`)
 	visibilities := reg.FindAllStringSubmatch(visibilityHTML[0][0], -1)
-	min, err := strconv.Atoi(visibilities[0][0])
+	min, err := convertIntFromFullWidthString(&visibilities[0][0])
 	if err != nil {
 		fmt.Println("透明度1の数値変換に失敗, 変換前=", visibilities[0][0])
 		return err
@@ -130,7 +129,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchVisibility(query string, doc *goq
 	case 1:
 		ocean.Visibility.Med = min
 	case 2:
-		max, err := strconv.Atoi(visibilities[1][0])
+		max, err := convertIntFromFullWidthString(&visibilities[1][0])
 		if err != nil {
 			fmt.Println("透明度2の数値変換に失敗, 変換前=", visibilities[1][0])
 			return err
@@ -142,20 +141,22 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchVisibility(query string, doc *goq
 }
 
 func (s *ScrapingServiceUkishimaTibaImpl) fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error {
-	MeasuredTimeHTML, _ := doc.Find(query).Html()
-	reg := regexp.MustCompile(`\d{1,2}`)
-	measuredTimes := reg.FindAllStringSubmatch(MeasuredTimeHTML, -1)
+	HTML := doc.Find(query)
+	date, _ := HTML.Attr("datetime")
+	reg := regexp.MustCompile(`[0-9０-９]{1,4}`)
+	dates := reg.FindAllStringSubmatch(date, -1)
 
-	month, err := strconv.Atoi(measuredTimes[0][0])
+	// HACK
+	year, err := strconv.Atoi(dates[0][0])
+	month, err := strconv.Atoi(dates[1][0])
+	day, err := strconv.Atoi(dates[2][0])
+	hour, err := strconv.Atoi(dates[3][0])
+	min, err := strconv.Atoi(dates[4][0])
+	sec, err := strconv.Atoi(dates[5][0])
 	if err != nil {
-		fmt.Println("月の数値変換に失敗, 変換前=", measuredTimes[0][0])
+		fmt.Println("datetimeの変換に失敗")
 		return err
 	}
-	day, err := strconv.Atoi(measuredTimes[1][0])
-	if err != nil {
-		fmt.Println("日の数値変換に失敗, 変換前=", measuredTimes[1][0])
-		return err
-	}
-	ocean.MeasuredTime = time.Date(time.Now().Year(), time.Month(month), day, 0, 0, 0, 0, time.UTC)
+	ocean.MeasuredTime = time.Date(year, time.Month(month), day, hour, min, sec, 0, time.Local)
 	return nil
 }

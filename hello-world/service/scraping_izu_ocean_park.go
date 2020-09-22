@@ -35,7 +35,7 @@ func NewScrapingServiceIzuOceanPark() *ScrapingServiceIzuOceanParkImpl {
 
 // Scrape ...
 func (s *ScrapingServiceIzuOceanParkImpl) Scrape() (*model.Ocean, error) {
-	ocean := model.NewOcean()
+	ocean := model.NewOcean("伊豆海洋公園")
 
 	// DOM取得
 	doc, err := s.fetchDocument(s.ScrapingService.url)
