@@ -26,8 +26,9 @@ Resources:
             Schedule: rate(10 minutes)
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
-          DYNAMODB_ENDPOINT: dummy
+          DYNAMODB_ENDPOINT: dummy # ローカルで環境変数を設定するために必要
           DYNAMODB_TABLE_NAME: !Ref OceanDynamoDBTable
+          ENV: dummy # ローカルで環境変数を設定するために必要
   OceanDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:

@@ -22,6 +22,7 @@ type ScrapingServiceIzuOceanParkImpl struct {
 
 // NewScrapingServiceIzuOceanPark ...
 func NewScrapingServiceIzuOceanPark(logging *logging.OceanLoggingImpl) *ScrapingServiceIzuOceanParkImpl {
+	// HACK: ScrapingServiceImplの中で、各ダイビングポイントの場所に依存して変わるもの以外は、ダイビングポイントの構造体に直接持たせる (隠したい)
 	return &ScrapingServiceIzuOceanParkImpl{
 		ScrapingService: &ScrapingServiceImpl{
 			url:     "https://iop-dc.com/",
