@@ -13,7 +13,7 @@ import (
 func TestScrapeUkishimaTiba(t *testing.T) {
 	s := NewScrapingServiceUkishimaTiba()
 	pwd, _ := os.Getwd()
-	url := pwd + "/testdata/" + t.Name() + "_20200921.json"
+	url := pwd + "/testdata/" + t.Name() + "_20200921.html"
 	s.ScrapingService.url = url
 	ocean, _ := s.Scrape()
 	assert.Equal(t, &model.Ocean{

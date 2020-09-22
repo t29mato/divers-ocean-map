@@ -45,7 +45,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) Scrape() (*model.Ocean, error) {
 	}
 
 	// 水温取得
-	err = s.fetchTemperature(s.queryTemperature, doc, ocean)
+	err = s.fetchTemperature("div.entry-content", doc, ocean)
 	if err != nil {
 		fmt.Println("水温の取得に失敗")
 		return nil, err
@@ -71,7 +71,11 @@ func (s *ScrapingServiceUkishimaTibaImpl) Scrape() (*model.Ocean, error) {
 func (s *ScrapingServiceUkishimaTibaImpl) fetchDocument(url string) (*goquery.Document, error) {
 	// 単体テスト実行時はローカルのHTMLファイルから取得する
 	if strings.Contains(url, "http") {
-		return goquery.NewDocument(url)
+		doc, _ := goquery.NewDocument(url)
+		latestArticleURL, _ := doc.Find("#post-9 > div > div:nth-child(5) > div > ul > li:nth-child(1) > div.kaiyou_thumb > a").Attr("href")
+		fmt.Println("latestArticleURL:", latestArticleURL)
+		latestDoc, _ := goquery.NewDocument(latestArticleURL)
+		return latestDoc, nil
 	}
 	file, err := os.Open(url)
 	if err != nil {
@@ -83,9 +87,11 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchDocument(url string) (*goquery.Do
 }
 
 func (s *ScrapingServiceUkishimaTibaImpl) fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error {
-	temperatureHTML, _ := doc.Find(query).Html()
-	reg := regexp.MustCompile(`\d{1,2}`)
-	temperatures := reg.FindAllStringSubmatch(temperatureHTML, -1)
+	articleHTML, _ := doc.Find(query).Html()
+	reg := regexp.MustCompile(`水温[\s\S]*℃`)
+	temperatureHTML := reg.FindAllStringSubmatch(articleHTML, -1)
+	reg = regexp.MustCompile(`[0-9０-９]{1,2}`)
+	temperatures := reg.FindAllStringSubmatch(temperatureHTML[0][0], -1)
 	min, err := strconv.Atoi(temperatures[0][0])
 	if err != nil {
 		fmt.Println("水温1の数値変換に失敗, 変換前=", temperatures[0][0])
