@@ -38,7 +38,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 			Body:       string(bytes),
 		}, nil
 	case "/api/oceans/":
-		ocean, err := db.FetchAllLatestOceans()
+		oceans, err := db.FetchAllLatestOceans()
 		if err != nil {
 			return events.APIGatewayProxyResponse{
 				StatusCode: http.StatusInternalServerError,
@@ -46,7 +46,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 			}, nil
 		}
 
-		bytes, _ := json.Marshal(&ocean)
+		bytes, _ := json.Marshal(&oceans)
 		logging.Info(string(bytes))
 
 		return events.APIGatewayProxyResponse{
