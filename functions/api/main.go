@@ -22,7 +22,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	switch resource {
 	case "/api/oceans/{name}":
 		locationName := request.PathParameters["name"]
-		ocean, err := db.Fetch(locationName)
+		ocean, err := db.FetchLatestOcean(locationName)
 		if err != nil {
 			return events.APIGatewayProxyResponse{
 				StatusCode: http.StatusInternalServerError,

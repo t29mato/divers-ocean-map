@@ -51,8 +51,8 @@ func NewDynamoDBService(logging *logging.OceanLoggingImpl) *DynamoDBServiceImpl 
 	}
 }
 
-// Fetch ...
-func (s *DynamoDBServiceImpl) Fetch(locationName string) (*model.Ocean, error) {
+// FetchLatestOcean 指定されたダイビングポイントの最新の海況情報を返す
+func (s *DynamoDBServiceImpl) FetchLatestOcean(locationName string) (*model.Ocean, error) {
 	queryInput := &dynamodb.QueryInput{
 		TableName: aws.String(s.tableName),
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
