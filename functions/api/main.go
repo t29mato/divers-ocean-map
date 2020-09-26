@@ -2,7 +2,7 @@ package main
 
 import (
 	"api/logging"
-	"api/model"
+	"api/service"
 	"encoding/json"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -14,7 +14,15 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	logging := logging.NewOceanLoggingImpl()
 	logging.Info("API開始")
 
-	ocean := model.NewOcean("適当な地名")
+	db := service.NewDynamoDBService()
+	ocean, err := db.Fetch("伊豆海洋公園")
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: 503,
+			Body:       err.Error(),
+		}, nil
+	}
+
 	bytes, _ := json.Marshal(&ocean)
 	logging.Info(string(bytes))
 

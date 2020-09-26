@@ -1,14 +1,14 @@
 package service
 
 import (
+	"api/model"
+	"fmt"
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-
-	"scraping/model"
 )
 
 // DynamoDBServiceImpl ...
@@ -48,21 +48,27 @@ func NewDynamoDBService() *DynamoDBServiceImpl {
 	}
 }
 
-// CreateIfNotExist パーティションキーとレンジキーの両方が存在しない場合のみ新規レコード作成
-func (s *DynamoDBServiceImpl) CreateIfNotExist(ocean *model.Ocean) error {
-	av, err := dynamodbattribute.MarshalMap(ocean)
-	if err != nil {
-		return err
+// Fetch ...
+func (s *DynamoDBServiceImpl) Fetch(locationName string) (*model.Ocean, error) {
+	queryInput := &dynamodb.QueryInput{
+		TableName: aws.String(s.tableName),
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":LocationName": {S: aws.String(locationName)},
+		},
+		ExpressionAttributeNames: map[string]*string{
+			"#LocationName": aws.String("LocationName"),
+		},
+		KeyConditionExpression: aws.String("#LocationName = :LocationName"),
+		Limit:                  aws.Int64(1),
+		ScanIndexForward:       aws.Bool(false), // 最新の日付順にするため (デフォルトだと古い順)
 	}
+	output, err := s.dynamoDB.Query(queryInput)
+	fmt.Println(output)
 
-	putItem := &dynamodb.PutItemInput{
-		TableName:           aws.String(s.tableName),
-		Item:                av,
-		ConditionExpression: aws.String("attribute_not_exists(LocationName) AND attribute_not_exists(MeasuredTime)"),
-	}
-	_, err = s.dynamoDB.PutItem(putItem)
+	var ocean model.Ocean
+	err = dynamodbattribute.UnmarshalMap(output.Items[0], &ocean)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &ocean, nil
 }
