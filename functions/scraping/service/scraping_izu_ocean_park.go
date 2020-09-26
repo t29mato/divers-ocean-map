@@ -38,7 +38,7 @@ func NewScrapingServiceIzuOceanPark(logging *logging.OceanLoggingImpl) *Scraping
 // Scrape ...
 func (s *ScrapingServiceIzuOceanParkImpl) Scrape() (*model.Ocean, error) {
 	s.ScrapingService.logging.Info("伊豆海洋公園のスクレイピング開始")
-	ocean := model.NewOcean("伊豆海洋公園")
+	ocean := model.NewOcean("izu-ocean-park")
 
 	// DOM取得
 	doc, err := s.fetchDocument(s.ScrapingService.url)

@@ -19,7 +19,7 @@ func TestScrapeUkishimaTiba(t *testing.T) {
 	s.ScrapingService.url = url
 	ocean, _ := s.Scrape()
 	assert.Equal(t, &model.Ocean{
-		LocationName: "浮島 (千葉県勝山市)",
+		LocationName: "ukishima-in-tiba-katsuyama",
 		Temperature: model.Temperature{
 			Min: 24,
 			Med: -1,

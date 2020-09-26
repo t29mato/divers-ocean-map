@@ -36,7 +36,7 @@ func NewScrapingServiceUkishimaTiba(logging *logging.OceanLoggingImpl) *Scraping
 
 // Scrape ...
 func (s *ScrapingServiceUkishimaTibaImpl) Scrape() (*model.Ocean, error) {
-	ocean := model.NewOcean("浮島 (千葉県勝山市)")
+	ocean := model.NewOcean("ukishima-in-tiba-katsuyama")
 
 	// DOM取得
 	doc, err := s.fetchDocument(s.ScrapingService.url)

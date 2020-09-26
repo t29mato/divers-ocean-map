@@ -19,7 +19,7 @@ func TestScrapeIOP(t *testing.T) {
 	s.ScrapingService.url = url
 	ocean, _ := s.Scrape()
 	assert.Equal(t, &model.Ocean{
-		LocationName: "伊豆海洋公園",
+		LocationName: "izu-ocean-park",
 		Temperature: model.Temperature{
 			Min: 21,
 			Med: -1,
@@ -37,7 +37,7 @@ func TestScrapeIOP(t *testing.T) {
 	s.ScrapingService.url = url
 	ocean, _ = s.Scrape()
 	assert.Equal(t, &model.Ocean{
-		LocationName: "伊豆海洋公園",
+		LocationName: "izu-ocean-park",
 		Temperature: model.Temperature{
 			Min: 23,
 			Med: -1,
