@@ -29,6 +29,24 @@ Resources:
           DYNAMODB_ENDPOINT: dummy # ローカルで環境変数を設定するために必要
           DYNAMODB_TABLE_NAME: !Ref OceanDynamoDBTable
           ENV: dummy # ローカルで環境変数を設定するために必要
+  OceanFetchAPI:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: functions/api
+      Handler: api
+      Runtime: go1.x
+      Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
+      Events:
+        CatchAll:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /ocean
+            Method: GET
+      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+        Variables:
+          DYNAMODB_ENDPOINT: dummy # ローカルで環境変数を設定するために必要
+          DYNAMODB_TABLE_NAME: !Ref OceanDynamoDBTable
+          ENV: dummy # ローカルで環境変数を設定するために必要
   OceanDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
