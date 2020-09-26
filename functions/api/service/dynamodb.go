@@ -1,6 +1,7 @@
 package service
 
 import (
+	"api/logging"
 	"api/model"
 	"fmt"
 	"os"
@@ -15,6 +16,7 @@ import (
 type DynamoDBServiceImpl struct {
 	tableName string
 	dynamoDB  *dynamodb.DynamoDB
+	logging   *logging.OceanLoggingImpl
 }
 
 // DynamoDBService ...
@@ -23,12 +25,13 @@ type DynamoDBService interface {
 }
 
 // NewDynamoDBService ...
-func NewDynamoDBService() *DynamoDBServiceImpl {
+func NewDynamoDBService(logging *logging.OceanLoggingImpl) *DynamoDBServiceImpl {
 	if os.Getenv("ENV") == "local" {
 		endpoint := os.Getenv("DYNAMODB_ENDPOINT")
 		s := &DynamoDBServiceImpl{
 			tableName: os.Getenv("DYNAMODB_TABLE_NAME"),
 			dynamoDB:  nil,
+			logging:   logging,
 		}
 		// DynamoDBの設定
 		sess := session.Must(session.NewSession())
@@ -66,6 +69,12 @@ func (s *DynamoDBServiceImpl) Fetch(locationName string) (*model.Ocean, error) {
 	fmt.Println(output)
 
 	var ocean model.Ocean
+
+	// TODO: 0件の場合にフロントで処理できるように、なんらか手を考える
+	if len(output.Items) == 0 {
+		s.logging.Info("該当するレコードは存在しません。, locationName=", locationName)
+		return nil, nil
+	}
 	err = dynamodbattribute.UnmarshalMap(output.Items[0], &ocean)
 	if err != nil {
 		return nil, err
