@@ -14,21 +14,32 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	logging := logging.NewOceanLoggingImpl()
 	logging.Info("API開始")
 
+	resource := request.Resource
+
 	db := service.NewDynamoDBService()
-	ocean, err := db.Fetch("伊豆海洋公園")
-	if err != nil {
+
+	switch resource {
+	case "/api/oceans/{name}":
+		locationName := request.PathParameters["name"]
+		ocean, err := db.Fetch(locationName)
+		if err != nil {
+			return events.APIGatewayProxyResponse{
+				StatusCode: 503,
+				Body:       err.Error(),
+			}, nil
+		}
+
+		bytes, _ := json.Marshal(&ocean)
+		logging.Info(string(bytes))
+
 		return events.APIGatewayProxyResponse{
-			StatusCode: 503,
-			Body:       err.Error(),
+			StatusCode: 200,
+			Body:       string(bytes),
 		}, nil
 	}
-
-	bytes, _ := json.Marshal(&ocean)
-	logging.Info(string(bytes))
-
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
-		Body:       string(bytes),
+		Body:       "hoge",
 	}, nil
 }
 
