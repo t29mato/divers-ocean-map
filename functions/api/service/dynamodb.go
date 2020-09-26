@@ -81,3 +81,23 @@ func (s *DynamoDBServiceImpl) FetchLatestOcean(locationName string) (*model.Ocea
 	}
 	return &ocean, nil
 }
+
+// FetchAllLatestOceans 全てのダイビングポイントの最新の海況情報を返す
+func (s *DynamoDBServiceImpl) FetchAllLatestOceans() ([]*model.Ocean, error) {
+	oceanNameList := []string{
+		"izu-ocean-park",
+		"ukishima-in-tiba-katsuyama",
+	}
+
+	var oceans []*model.Ocean
+	for _, name := range oceanNameList {
+		ocean, err := s.FetchLatestOcean(name)
+		if err != nil {
+			s.logging.Info("取得に失敗, locationName:", name)
+			continue
+		}
+		oceans = append(oceans, ocean)
+	}
+
+	return oceans, nil
+}
