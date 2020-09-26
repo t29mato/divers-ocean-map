@@ -4,6 +4,7 @@ import (
 	"api/logging"
 	"api/service"
 	"encoding/json"
+	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -24,7 +25,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		ocean, err := db.Fetch(locationName)
 		if err != nil {
 			return events.APIGatewayProxyResponse{
-				StatusCode: 503,
+				StatusCode: http.StatusInternalServerError,
 				Body:       err.Error(),
 			}, nil
 		}
@@ -33,12 +34,12 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		logging.Info(string(bytes))
 
 		return events.APIGatewayProxyResponse{
-			StatusCode: 200,
+			StatusCode: http.StatusOK,
 			Body:       string(bytes),
 		}, nil
 	}
 	return events.APIGatewayProxyResponse{
-		StatusCode: 200,
+		StatusCode: http.StatusOK,
 		Body:       "hoge",
 	}, nil
 }
