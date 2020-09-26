@@ -26,13 +26,13 @@ type DynamoDBService interface {
 
 // NewDynamoDBService ...
 func NewDynamoDBService(logging *logging.OceanLoggingImpl) *DynamoDBServiceImpl {
+	s := &DynamoDBServiceImpl{
+		tableName: os.Getenv("DYNAMODB_TABLE_NAME"),
+		dynamoDB:  nil,
+		logging:   logging,
+	}
 	if os.Getenv("ENV") == "local" {
 		endpoint := os.Getenv("DYNAMODB_ENDPOINT")
-		s := &DynamoDBServiceImpl{
-			tableName: os.Getenv("DYNAMODB_TABLE_NAME"),
-			dynamoDB:  nil,
-			logging:   logging,
-		}
 		// DynamoDBの設定
 		sess := session.Must(session.NewSession())
 		config := aws.NewConfig().WithRegion("ap-northeast-1")
@@ -41,14 +41,11 @@ func NewDynamoDBService(logging *logging.OceanLoggingImpl) *DynamoDBServiceImpl 
 		}
 
 		s.dynamoDB = dynamodb.New(sess, config)
-		return s
 	}
 
 	// AWS上では、endpointなしで、自動で解決してくれるため、endpointの設定なし
-	return &DynamoDBServiceImpl{
-		tableName: os.Getenv("DYNAMODB_TABLE_NAME"),
-		dynamoDB:  dynamodb.New(session.Must(session.NewSession())),
-	}
+	s.dynamoDB = dynamodb.New(session.Must(session.NewSession()))
+	return s
 }
 
 // FetchLatestOcean 指定されたダイビングポイントの最新の海況情報を返す
@@ -72,7 +69,7 @@ func (s *DynamoDBServiceImpl) FetchLatestOcean(locationName string) (*model.Ocea
 
 	// TODO: 0件の場合にフロントで処理できるように、なんらか手を考える
 	if len(output.Items) == 0 {
-		s.logging.Info("該当するレコードは存在しません。, locationName=", locationName)
+		s.logging.Info("該当するレコードは存在しません。 locationName=", locationName)
 		return nil, nil
 	}
 	err = dynamodbattribute.UnmarshalMap(output.Items[0], &ocean)
