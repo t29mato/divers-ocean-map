@@ -39,8 +39,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, nil
 	}
 	return events.APIGatewayProxyResponse{
-		StatusCode: http.StatusOK,
-		Body:       "hoge",
+		StatusCode: http.StatusNotAcceptable,
 	}, nil
 }
 
