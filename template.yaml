@@ -35,6 +35,7 @@ Resources:
       CodeUri: functions/api
       Handler: api
       Runtime: go1.x
+      Policies: AmazonDynamoDBFullAccess
       Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
       Events:
         GetLatestOcean:
