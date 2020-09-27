@@ -3,7 +3,6 @@ package service
 import (
 	"api/logging"
 	"api/model"
-	"fmt"
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -63,7 +62,9 @@ func (s *DynamoDBServiceImpl) FetchLatestOcean(locationName string) (*model.Ocea
 		ScanIndexForward:       aws.Bool(false), // 最新の日付順にするため (デフォルトだと古い順)
 	}
 	output, err := s.dynamoDB.Query(queryInput)
-	fmt.Println(output)
+	if err != nil {
+		return nil, err
+	}
 
 	var ocean model.Ocean
 
