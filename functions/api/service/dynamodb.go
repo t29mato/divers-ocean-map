@@ -40,6 +40,7 @@ func NewDynamoDBService(logging *logging.OceanLoggingImpl) *DynamoDBServiceImpl 
 		}
 
 		s.dynamoDB = dynamodb.New(sess, config)
+		return s
 	}
 
 	// AWS上では、endpointなしで、自動で解決してくれるため、endpointの設定なし
@@ -91,7 +92,7 @@ func (s *DynamoDBServiceImpl) FetchAllLatestOceans() ([]*model.Ocean, error) {
 	for _, name := range oceanNameList {
 		ocean, err := s.FetchLatestOcean(name)
 		if err != nil {
-			s.logging.Info("取得に失敗, locationName:", name)
+			s.logging.Info("取得に失敗, locationName:", name, err.Error())
 			continue
 		}
 		oceans = append(oceans, ocean)
