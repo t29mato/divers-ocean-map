@@ -13,9 +13,9 @@ import (
 // Handler ...
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	logging := logging.NewOceanLoggingImpl()
-	logging.Info("API開始")
 
 	resource := request.Resource
+	logging.Info("API開始, path=", resource)
 
 	db := service.NewDynamoDBService(logging)
 
@@ -37,7 +37,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 			StatusCode: http.StatusOK,
 			Body:       string(bytes),
 		}, nil
-	case "/api/oceans/":
+	case "/api/oceans":
 		oceans, err := db.FetchAllLatestOceans()
 		if err != nil {
 			return events.APIGatewayProxyResponse{
