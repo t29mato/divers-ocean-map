@@ -57,6 +57,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusNotAcceptable,
+		Body:       "無効なURLです",
 	}, nil
 }
 
