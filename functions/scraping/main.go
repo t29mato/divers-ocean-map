@@ -3,6 +3,9 @@ package main
 import (
 	"scraping/logging"
 	"scraping/service"
+	"scraping/service/shizuoka/iop"
+	"scraping/service/shizuoka/ukishima"
+	"scraping/service/tiba"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -15,35 +18,37 @@ func Handler(e *events.CloudWatchEvent) {
 	logging.Info("スクレイピング開始")
 
 	// TODO: goroutine 使う
-	scrapingServiceIzuOceanPark := service.NewScrapingServiceIzuOceanPark(logging)
+	scrapingServiceIzuOceanPark := iop.NewScrapingServiceIzuOceanPark("izu-ocean-park", "https://iop-dc.com/", logging)
 	oceanIzuOceanPark, err := scrapingServiceIzuOceanPark.Scrape()
 	if err != nil {
 		logging.Info("伊豆海洋公園のスクレイピングの途中で失敗しました", err.Error())
 	}
 
-	err = scrapingServiceIzuOceanPark.ScrapingService.Store(oceanIzuOceanPark)
+	repositoryService := service.NewRepository(logging)
+
+	err = repositoryService.Store(oceanIzuOceanPark)
 	if err != nil {
 		logging.Info("伊豆海洋公園のDBへの挿入で失敗", err.Error())
 	}
 
-	scrapingServiceUkishimaTiba := service.NewScrapingServiceUkishimaTiba(logging)
+	scrapingServiceUkishimaTiba := tiba.NewScrapingServiceUkishimaTiba("ukishima-in-tiba-katsuyama", "http://paroparo.jp", logging)
 	oceanUkishimaTiba, err := scrapingServiceUkishimaTiba.Scrape()
 	if err != nil {
 		logging.Info("浮島 (千葉県勝山市)のスクレイピングの途中で失敗しました", err.Error())
 	}
 
-	err = scrapingServiceUkishimaTiba.ScrapingService.Store(oceanUkishimaTiba)
+	err = repositoryService.Store(oceanUkishimaTiba)
 	if err != nil {
 		logging.Info("浮島 (千葉県勝山市)のDBへの挿入で失敗", err.Error())
 	}
 
-	scrapingServiceUkishimaNishiizu := service.NewScrapingServiceUkishimaNishiizu(logging)
+	scrapingServiceUkishimaNishiizu := ukishima.NewScrapingServiceUkishimaNishiizu(logging)
 	oceanUkishimaNishiizu, err := scrapingServiceUkishimaNishiizu.Scrape()
 	if err != nil {
 		logging.Info("浮島 (静岡県西伊豆)のスクレイピングの途中で失敗しました", err.Error())
 	}
 
-	err = scrapingServiceUkishimaNishiizu.ScrapingService.Store(oceanUkishimaNishiizu)
+	err = repositoryService.Store(oceanUkishimaNishiizu)
 	if err != nil {
 		logging.Info("浮島 (静岡県西伊豆)のDBへの挿入で失敗", err.Error())
 	}

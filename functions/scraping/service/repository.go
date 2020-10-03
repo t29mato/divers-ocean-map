@@ -5,19 +5,26 @@ import (
 	"scraping/model"
 )
 
-// ScrapingService ...
-type ScrapingService interface {
-	Scrape() (*model.Ocean, error)
+// RepositoryService ...
+type RepositoryService interface {
+	Store(ocean *model.Ocean) error
 }
 
-// ScrapingServiceImpl ...
-type ScrapingServiceImpl struct {
+// RepositoryServiceImpl ...
+type RepositoryServiceImpl struct {
 	logging *logging.OceanLoggingImpl
 	db      *DynamoDBServiceImpl
 }
 
+// NewRepository ...
+func NewRepository(logging *logging.OceanLoggingImpl) *RepositoryServiceImpl {
+	return &RepositoryServiceImpl{
+		logging: logging,
+	}
+}
+
 // Store ...
-func (s *ScrapingServiceImpl) Store(ocean *model.Ocean) error {
+func (s *RepositoryServiceImpl) Store(ocean *model.Ocean) error {
 	s.logging.Info("データの永久保存開始", ocean.LocationName)
 	err := s.db.CreateIfNotExist(ocean)
 	if err != nil {

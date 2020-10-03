@@ -1,10 +1,11 @@
-package service
+package tiba
 
 import (
 	"os"
 	"regexp"
 	"scraping/logging"
 	"scraping/model"
+	"scraping/service/util"
 	"strconv"
 	"strings"
 	"time"
@@ -14,19 +15,19 @@ import (
 
 // ScrapingServiceUkishimaTibaImpl ...
 type ScrapingServiceUkishimaTibaImpl struct {
-	ScrapingService   *ScrapingServiceImpl
+	logging           *logging.OceanLoggingImpl
+	name              string
+	url               string
 	queryArticle      string
 	queryMeasuredTime string
 }
 
 // NewScrapingServiceUkishimaTiba ...
-func NewScrapingServiceUkishimaTiba(logging *logging.OceanLoggingImpl) *ScrapingServiceUkishimaTibaImpl {
+func NewScrapingServiceUkishimaTiba(name string, url string, logging *logging.OceanLoggingImpl) *ScrapingServiceUkishimaTibaImpl {
 	return &ScrapingServiceUkishimaTibaImpl{
-		ScrapingService: &ScrapingServiceImpl{
-			url:     "http://paroparo.jp",
-			db:      NewDynamoDBService(),
-			logging: logging,
-		},
+		logging:           logging,
+		name:              name,
+		url:               url,
 		queryArticle:      "div.entry-content",
 		queryMeasuredTime: "#homeConditionIndex > dl > dt",
 	}
@@ -37,30 +38,30 @@ func (s *ScrapingServiceUkishimaTibaImpl) Scrape() (*model.Ocean, error) {
 	ocean := model.NewOcean("ukishima-in-tiba-katsuyama", "http://paroparo.jp")
 
 	// DOM取得
-	doc, err := s.fetchDocument(s.ScrapingService.url, ocean)
+	doc, err := s.fetchDocument(s.url, ocean)
 	if err != nil {
-		s.ScrapingService.logging.Info("HTMLファイルの読み込みに失敗しました。url =", s.ScrapingService.url)
+		s.logging.Info("HTMLファイルの読み込みに失敗しました。url =", s.url)
 		return nil, err
 	}
 
 	// 水温取得
 	err = s.fetchTemperature(s.queryArticle, doc, ocean)
 	if err != nil {
-		s.ScrapingService.logging.Info("水温の取得に失敗")
+		s.logging.Info("水温の取得に失敗")
 		return nil, err
 	}
 
 	// 透明度取得
 	err = s.fetchVisibility(s.queryArticle, doc, ocean)
 	if err != nil {
-		s.ScrapingService.logging.Info("透明度の取得に失敗")
+		s.logging.Info("透明度の取得に失敗")
 		return nil, err
 	}
 
 	// 測定日時取得
 	err = s.fetchMeasuredTime("footer > span.posted-on > a:nth-child(2) > time.entry-date.published", doc, ocean)
 	if err != nil {
-		s.ScrapingService.logging.Info("測定日時の取得に失敗")
+		s.logging.Info("測定日時の取得に失敗")
 		return nil, err
 	}
 
@@ -78,7 +79,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchDocument(url string, ocean *model
 	}
 	file, err := os.Open(url)
 	if err != nil {
-		s.ScrapingService.logging.Info("有効なファイルパスでありません。url =", url)
+		s.logging.Info("有効なファイルパスでありません。url =", url)
 		return nil, err
 	}
 	defer file.Close()
@@ -92,9 +93,9 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchTemperature(query string, doc *go
 	reg = regexp.MustCompile(`[0-9０-９]{1,2}`)
 	temperatures := reg.FindAllStringSubmatch(temperatureHTML[0][0], -1)
 
-	min, err := convertIntFromFullWidthString(&temperatures[0][0])
+	min, err := util.ConvertIntFromFullWidthString(&temperatures[0][0])
 	if err != nil {
-		s.ScrapingService.logging.Info("水温1の数値変換に失敗, 変換前=", temperatures[0][0])
+		s.logging.Info("水温1の数値変換に失敗, 変換前=", temperatures[0][0])
 		return err
 	}
 
@@ -102,9 +103,9 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchTemperature(query string, doc *go
 	case 1:
 		ocean.Temperature.Med = min
 	case 2:
-		max, err := convertIntFromFullWidthString(&temperatures[1][0])
+		max, err := util.ConvertIntFromFullWidthString(&temperatures[1][0])
 		if err != nil {
-			s.ScrapingService.logging.Info("水温2の数値変換に失敗, 変換前=", temperatures[1][0])
+			s.logging.Info("水温2の数値変換に失敗, 変換前=", temperatures[1][0])
 			return err
 		}
 		ocean.Temperature.Min = min
@@ -119,18 +120,18 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchVisibility(query string, doc *goq
 	visibilityHTML := reg.FindAllStringSubmatch(articleHTML, -1)
 	reg = regexp.MustCompile(`[0-9０-９]{1,2}`)
 	visibilities := reg.FindAllStringSubmatch(visibilityHTML[0][0], -1)
-	min, err := convertIntFromFullWidthString(&visibilities[0][0])
+	min, err := util.ConvertIntFromFullWidthString(&visibilities[0][0])
 	if err != nil {
-		s.ScrapingService.logging.Info("透明度1の数値変換に失敗, 変換前=", visibilities[0][0])
+		s.logging.Info("透明度1の数値変換に失敗, 変換前=", visibilities[0][0])
 		return err
 	}
 	switch len(visibilities) {
 	case 1:
 		ocean.Visibility.Med = min
 	case 2:
-		max, err := convertIntFromFullWidthString(&visibilities[1][0])
+		max, err := util.ConvertIntFromFullWidthString(&visibilities[1][0])
 		if err != nil {
-			s.ScrapingService.logging.Info("透明度2の数値変換に失敗, 変換前=", visibilities[1][0])
+			s.logging.Info("透明度2の数値変換に失敗, 変換前=", visibilities[1][0])
 			return err
 		}
 		ocean.Visibility.Min = min
@@ -153,7 +154,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchMeasuredTime(query string, doc *g
 	min, err := strconv.Atoi(dates[4][0])
 	sec, err := strconv.Atoi(dates[5][0])
 	if err != nil {
-		s.ScrapingService.logging.Info("datetimeの変換に失敗")
+		s.logging.Info("datetimeの変換に失敗")
 		return err
 	}
 	ocean.MeasuredTime = time.Date(year, time.Month(month), day, hour, min, sec, 0, time.Local)

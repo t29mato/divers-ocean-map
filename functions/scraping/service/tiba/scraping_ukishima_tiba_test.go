@@ -1,4 +1,4 @@
-package service
+package tiba
 
 import (
 	"os"
@@ -13,14 +13,13 @@ import (
 // TestScrape ...
 func TestScrapeUkishimaTiba(t *testing.T) {
 	logging := logging.NewOceanLoggingImpl("66936b3e-08e3-404b-815d-ddbccfb03cc9")
-	s := NewScrapingServiceUkishimaTiba(logging)
+	s := NewScrapingServiceUkishimaTiba("ukishima-in-tiba-katsuyama", "http://paroparo.jp", logging)
 	pwd, _ := os.Getwd()
-	url := pwd + "/testdata/" + t.Name() + "_20200921.html"
-	s.ScrapingService.url = url
+	s.url = pwd + "/testdata/" + t.Name() + "_20200921.html"
 	ocean, _ := s.Scrape()
 	assert.Equal(t, &model.Ocean{
-		LocationName: "ukishima-in-tiba-katsuyama",
-		URL:          "http://paroparo.jp",
+		LocationName: s.name,
+		URL:          s.url,
 		Temperature: model.Temperature{
 			Min: 24,
 			Med: -1,
@@ -37,10 +36,9 @@ func TestScrapeUkishimaTiba(t *testing.T) {
 
 func TestScrapeUkishimaTiba_20201003(t *testing.T) {
 	logging := logging.NewOceanLoggingImpl("66936b3e-08e3-404b-815d-ddbccfb03cc9")
-	s := NewScrapingServiceUkishimaTiba(logging)
+	s := NewScrapingServiceUkishimaTiba("ukishima-in-tiba-katsuyama", "http://paroparo.jp", logging)
 	pwd, _ := os.Getwd()
-	url := pwd + "/testdata/" + t.Name() + ".html"
-	s.ScrapingService.url = url
+	s.url = pwd + "/testdata/" + t.Name() + ".html"
 	ocean, _ := s.Scrape()
 	assert.Equal(t, &model.Ocean{
 		LocationName: "ukishima-in-tiba-katsuyama",
