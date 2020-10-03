@@ -41,7 +41,7 @@ func (s *FetchServiceImpl) Fetch() (*model.Ocean, error) {
 	ocean := model.NewOcean(s.name, s.url)
 
 	// DOM取得
-	doc, err := s.fetchDocument(s.url)
+	doc, err := s.fetchDocument(s.url, ocean)
 	if err != nil {
 		s.logging.Info("HTMLファイルの読み込みに失敗しました。url =", s.url)
 		return nil, err
