@@ -25,7 +25,7 @@ namespace iop {
         - queryVisibility string
         - queryMeasuredTime string
 
-        - fetchDocument(url string) (*goquery.Document, error)
+        - fetchDocument(url string, ocean *model.Ocean) (*goquery.Document, error)
         - fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error
         - fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error
         - fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error
@@ -121,7 +121,10 @@ namespace service {
 
     }
     interface FetchService  {
-        - fetchDocument(url string) (*goquery.Document, error)
+        - fetchDocument(url string, ocean *model.Ocean) (*goquery.Document, error)
+        - fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error
+        - fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error
+        - fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error
 
         + Fetch() (*model.Ocean, error)
 
@@ -130,7 +133,7 @@ namespace service {
 
 
 namespace tiba {
-    class FetchServiceUkishimaTibaImpl << (S,Aquamarine) >> {
+    class FetchServiceImpl << (S,Aquamarine) >> {
         - logging *logging.OceanLoggingImpl
         - name string
         - url string
@@ -147,6 +150,7 @@ namespace tiba {
     }
 }
 
+"service.FetchService" <|-- "tiba.FetchServiceImpl"
 
 namespace ukishima {
     class FetchServiceImpl << (S,Aquamarine) >> {
@@ -166,5 +170,6 @@ namespace ukishima {
     }
 }
 
+"service.FetchService" <|-- "ukishima.FetchServiceImpl"
 
 @enduml

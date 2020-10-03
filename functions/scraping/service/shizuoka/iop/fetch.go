@@ -72,7 +72,7 @@ func (s *FetchServiceImpl) Fetch() (*model.Ocean, error) {
 	return ocean, err
 }
 
-func (s *FetchServiceImpl) fetchDocument(url string) (*goquery.Document, error) {
+func (s *FetchServiceImpl) fetchDocument(url string, ocean *model.Ocean) (*goquery.Document, error) {
 	// 単体テスト実行時はローカルのHTMLファイルから取得する
 	if strings.Contains(url, "http") {
 		return goquery.NewDocument(url)
