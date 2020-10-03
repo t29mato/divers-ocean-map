@@ -1,9 +1,9 @@
 package repository
 
 import (
+	"scraping/database"
 	"scraping/logging"
 	"scraping/model"
-	"scraping/service"
 )
 
 // OceanRepository ...
@@ -14,14 +14,14 @@ type OceanRepository interface {
 // OceanRepositoryImpl ...
 type OceanRepositoryImpl struct {
 	logging *logging.OceanLoggingImpl
-	db      *service.DynamoDBServiceImpl
+	db      *database.DynamoDBServiceImpl
 }
 
 // NewOceanRepository ...
 func NewOceanRepository(logging *logging.OceanLoggingImpl) *OceanRepositoryImpl {
 	return &OceanRepositoryImpl{
 		logging: logging,
-		db:      service.NewDynamoDBService(),
+		db:      database.NewDynamoDBService(),
 	}
 }
 

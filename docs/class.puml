@@ -1,4 +1,21 @@
 @startuml
+namespace database {
+    interface DynamoDBService  {
+        + CreateIfNotExist( *model.Ocean) error
+
+    }
+    class DynamoDBServiceImpl << (S,Aquamarine) >> {
+        - tableName string
+        - dynamoDB *dynamodb.DynamoDB
+
+        + CreateIfNotExist(ocean *model.Ocean) error
+
+    }
+}
+
+"database.DynamoDBService" <|-- "database.DynamoDBServiceImpl"
+"service.DynamoDBService" <|-- "database.DynamoDBServiceImpl"
+
 namespace iop {
     class ScrapingServiceIzuOceanParkImpl << (S,Aquamarine) >> {
         - logging *logging.OceanLoggingImpl
@@ -80,7 +97,7 @@ namespace repository {
     }
     class OceanRepositoryImpl << (S,Aquamarine) >> {
         - logging *logging.OceanLoggingImpl
-        - db *service.DynamoDBServiceImpl
+        - db *database.DynamoDBServiceImpl
 
         + Store(ocean *model.Ocean) error
 
@@ -92,19 +109,15 @@ namespace repository {
 namespace service {
     interface DynamoDBService  {
         + CreateIfNotExist( *model.Ocean) error
-        + CreateIfNotExist( *model.Ocean) error
 
     }
     class DynamoDBServiceImpl << (S,Aquamarine) >> {
         - tableName string
         - dynamoDB *dynamodb.DynamoDB
         - logging *logging.OceanLoggingImpl
-        - tableName string
-        - dynamoDB *dynamodb.DynamoDB
 
         + FetchLatestOcean(locationName string) (*model.Ocean, error)
         + FetchAllLatestOceans() ([]*model.Ocean, error)
-        + CreateIfNotExist(ocean *model.Ocean) error
 
     }
     interface ScrapingService  {
@@ -113,7 +126,6 @@ namespace service {
     }
 }
 
-"service.DynamoDBService" <|-- "service.DynamoDBServiceImpl"
 
 namespace tiba {
     class ScrapingServiceUkishimaTibaImpl << (S,Aquamarine) >> {
