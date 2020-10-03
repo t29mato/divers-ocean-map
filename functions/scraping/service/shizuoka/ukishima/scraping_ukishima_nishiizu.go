@@ -2,6 +2,7 @@ package ukishima
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -134,7 +135,13 @@ func (s *ScrapingServiceUkishimaNishiizuImpl) fetchTemperature(query string, doc
 	reg := regexp.MustCompile(`水温[\s\S]*℃`)
 	temperatureHTML := reg.FindAllStringSubmatch(articleHTML, -1)
 	reg = regexp.MustCompile(`[0-9０-９]{1,2}`)
+
+	if len(temperatureHTML) == 0 {
+		s.logging.Info("水温を1箇所も取得に失敗 URL=", s.url)
+		return nil
+	}
 	temperatures := reg.FindAllStringSubmatch(temperatureHTML[0][0], -1)
+	fmt.Println(temperatureHTML)
 
 	min, err := util.ConvertIntFromFullWidthString(&temperatures[0][0])
 	if err != nil {
@@ -161,6 +168,11 @@ func (s *ScrapingServiceUkishimaNishiizuImpl) fetchVisibility(query string, doc 
 	reg := regexp.MustCompile(`透明度[\s\S]*ｍ`)
 	visibilityHTML := reg.FindAllStringSubmatch(articleHTML, -1)
 	reg = regexp.MustCompile(`[0-9０-９]{1,2}`)
+
+	if len(visibilityHTML) == 0 {
+		s.logging.Info("透明度を1箇所も取得に失敗 URL=", s.url)
+		return nil
+	}
 	visibilities := reg.FindAllStringSubmatch(visibilityHTML[0][0], -1)
 
 	min, err := util.ConvertIntFromFullWidthString(&visibilities[0][0])

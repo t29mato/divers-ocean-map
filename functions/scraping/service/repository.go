@@ -20,6 +20,7 @@ type RepositoryServiceImpl struct {
 func NewRepository(logging *logging.OceanLoggingImpl) *RepositoryServiceImpl {
 	return &RepositoryServiceImpl{
 		logging: logging,
+		db:      NewDynamoDBService(),
 	}
 }
 
