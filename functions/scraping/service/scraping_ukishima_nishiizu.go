@@ -118,6 +118,7 @@ func (s *ScrapingServiceUkishimaNishiizuImpl) fetchDocument(url string) (*goquer
 	}
 
 	file, err = os.Open("./utf-8.txt")
+	defer os.Remove("./utf-8.txt")
 	defer file.Close()
 	if err != nil {
 		log.Fatal(err)
