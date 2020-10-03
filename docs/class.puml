@@ -23,14 +23,11 @@ namespace iop {
 namespace logging {
     interface OceanLogging  {
         + Info(message ...string) 
-        + Info(message ...string) 
 
     }
     class OceanLoggingImpl << (S,Aquamarine) >> {
         - requestID string
-        - requestID string
 
-        + Info(message ...string) 
         + Info(message ...string) 
 
     }
@@ -45,26 +42,15 @@ namespace model {
         + Temperature Temperature
         + Visibility Visibility
         + MeasuredTime time.Time
-        + LocationName string
-        + URL string
-        + Temperature Temperature
-        + Visibility Visibility
-        + MeasuredTime time.Time
 
     }
     class Temperature << (S,Aquamarine) >> {
         + Min int
         + Med int
         + Max int
-        + Min int
-        + Med int
-        + Max int
 
     }
     class Visibility << (S,Aquamarine) >> {
-        + Min int
-        + Med int
-        + Max int
         + Min int
         + Med int
         + Max int
@@ -76,18 +62,12 @@ namespace model {
 namespace service {
     interface DynamoDBService  {
         + CreateIfNotExist( *model.Ocean) error
-        + CreateIfNotExist( *model.Ocean) error
 
     }
     class DynamoDBServiceImpl << (S,Aquamarine) >> {
         - tableName string
         - dynamoDB *dynamodb.DynamoDB
-        - logging *logging.OceanLoggingImpl
-        - tableName string
-        - dynamoDB *dynamodb.DynamoDB
 
-        + FetchLatestOcean(locationName string) (*model.Ocean, error)
-        + FetchAllLatestOceans() ([]*model.Ocean, error)
         + CreateIfNotExist(ocean *model.Ocean) error
 
     }
