@@ -45,7 +45,7 @@ func (s *ScrapingServiceUkishimaNishiizuImpl) Scrape() (*model.Ocean, error) {
 	ocean := model.NewOcean("ukishima-boat-in-shizuoka-nishiizu", "http://srdkaikyo.sblo.jp/")
 
 	// DOM取得
-	doc, err := s.fetchDocument(s.ScrapingService.url)
+	doc, err := s.fetchDocument(s.ScrapingService.url, ocean)
 	if err != nil {
 		s.ScrapingService.logging.Info("HTMLファイルの読み込みに失敗しました。url =", s.ScrapingService.url)
 		return nil, err
@@ -76,13 +76,13 @@ func (s *ScrapingServiceUkishimaNishiizuImpl) Scrape() (*model.Ocean, error) {
 	return ocean, err
 }
 
-func (s *ScrapingServiceUkishimaNishiizuImpl) fetchDocument(url string) (*goquery.Document, error) {
+func (s *ScrapingServiceUkishimaNishiizuImpl) fetchDocument(url string, ocean *model.Ocean) (*goquery.Document, error) {
 	// 単体テスト実行時はローカルのHTMLファイルから取得する
 	if strings.Contains(url, "http") {
 		doc, _ := goquery.NewDocument(url)
 		// トップページには透明度情報がないので、トップページから最新の記事のURLを取得する
 		latestArticleURL, _ := doc.Find("#content > div:nth-child(2) > div > h3 > a").Attr("href")
-		s.ScrapingService.logging.Info("latestArticleURL:", latestArticleURL)
+		ocean.URL = latestArticleURL
 
 		res, err := http.Get(url)
 		if err != nil {
