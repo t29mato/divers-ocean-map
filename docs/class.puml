@@ -1,4 +1,25 @@
 @startuml
+namespace iop {
+    class ScrapingServiceIzuOceanParkImpl << (S,Aquamarine) >> {
+        - logging *logging.OceanLoggingImpl
+        - name string
+        - url string
+        - queryTemperature string
+        - queryVisibility string
+        - queryMeasuredTime string
+
+        - fetchDocument(url string) (*goquery.Document, error)
+        - fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error
+        - fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error
+        - fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error
+
+        + Scrape() (*model.Ocean, error)
+
+    }
+}
+
+"service.ScrapingService" <|-- "iop.ScrapingServiceIzuOceanParkImpl"
+
 namespace logging {
     interface OceanLogging  {
         + Info(message ...string) 
@@ -55,33 +76,14 @@ namespace service {
 
     }
     class ScrapingServiceImpl << (S,Aquamarine) >> {
-        - url string
-        - db *DynamoDBServiceImpl
-        - logging *logging.OceanLoggingImpl
-
         + Store(ocean *model.Ocean) error
-
-    }
-    class ScrapingServiceIzuOceanParkImpl << (S,Aquamarine) >> {
-        - queryTemperature string
-        - queryVisibility string
-        - queryMeasuredTime string
-
-        + ScrapingService *ScrapingServiceImpl
-
-        - fetchDocument(url string) (*goquery.Document, error)
-        - fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error
-        - fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error
-        - fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error
-
-        + Scrape() (*model.Ocean, error)
 
     }
     class ScrapingServiceUkishimaNishiizuImpl << (S,Aquamarine) >> {
         - queryArticle string
         - queryDate string
 
-        + ScrapingService *ScrapingServiceImpl
+        + ScrapingService *service.ScrapingServiceImpl
 
         - fetchDocument(url string, ocean *model.Ocean) (*goquery.Document, error)
         - fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error
@@ -108,7 +110,6 @@ namespace service {
 }
 
 "service.DynamoDBService" <|-- "service.DynamoDBServiceImpl"
-"service.ScrapingService" <|-- "service.ScrapingServiceIzuOceanParkImpl"
 "service.ScrapingService" <|-- "service.ScrapingServiceUkishimaNishiizuImpl"
 "service.ScrapingService" <|-- "service.ScrapingServiceUkishimaTibaImpl"
 

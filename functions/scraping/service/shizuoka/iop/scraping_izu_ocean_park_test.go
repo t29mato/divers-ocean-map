@@ -1,4 +1,4 @@
-package service
+package iop
 
 import (
 	"os"
@@ -13,14 +13,13 @@ import (
 // TestScrape ...
 func TestScrapeIOP(t *testing.T) {
 	logging := logging.NewOceanLoggingImpl("66936b3e-08e3-404b-815d-ddbccfb03cc9")
-	s := NewScrapingServiceIzuOceanPark(logging)
+	s := NewScrapingServiceIzuOceanPark("izu-ocean-park", "https://iop-dc.com/", logging)
 	pwd, _ := os.Getwd()
-	url := pwd + "/testdata/" + t.Name() + "_20200913.html"
-	s.ScrapingService.url = url
+	s.url = pwd + "/testdata/" + t.Name() + "_20200913.html"
 	ocean, _ := s.Scrape()
 	assert.Equal(t, &model.Ocean{
 		LocationName: "izu-ocean-park",
-		URL:          "https://iop-dc.com/",
+		URL:          s.url,
 		Temperature: model.Temperature{
 			Min: 21,
 			Med: -1,
@@ -34,12 +33,11 @@ func TestScrapeIOP(t *testing.T) {
 		MeasuredTime: time.Date(2020, time.September, 13, 0, 0, 0, 0, time.UTC),
 	}, ocean)
 
-	url = pwd + "/testdata/" + t.Name() + "_20200922.html"
-	s.ScrapingService.url = url
+	s.url = pwd + "/testdata/" + t.Name() + "_20200922.html"
 	ocean, _ = s.Scrape()
 	assert.Equal(t, &model.Ocean{
 		LocationName: "izu-ocean-park",
-		URL:          "https://iop-dc.com/",
+		URL:          s.url,
 		Temperature: model.Temperature{
 			Min: 23,
 			Med: -1,
