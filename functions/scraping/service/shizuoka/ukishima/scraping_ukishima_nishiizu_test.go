@@ -13,10 +13,9 @@ import (
 // TestScrape ...
 func TestScrapeUkishimaNishiizu(t *testing.T) {
 	logging := logging.NewOceanLoggingImpl("66936b3e-08e3-404b-815d-ddbccfb03cc9")
-	s := NewScrapingServiceUkishimaNishiizu(logging)
+	s := NewScrapingServiceUkishimaNishiizu("ukishima-boat-in-shizuoka-nishiizu", "http://srdkaikyo.sblo.jp/", logging)
 	pwd, _ := os.Getwd()
-	url := pwd + "/testdata/" + t.Name() + "_20201003.html"
-	s.ScrapingService.url = url
+	s.url = pwd + "/testdata/" + t.Name() + "_20201003.html"
 	ocean, _ := s.Scrape()
 	assert.Equal(t, &model.Ocean{
 		LocationName: "ukishima-boat-in-shizuoka-nishiizu",
