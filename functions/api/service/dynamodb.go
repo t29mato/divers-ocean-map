@@ -86,6 +86,7 @@ func (s *DynamoDBServiceImpl) FetchAllLatestOceans() ([]*model.Ocean, error) {
 	oceanNameList := []string{
 		"izu-ocean-park",
 		"ukishima-in-tiba-katsuyama",
+		"ukishima-boat-in-shizuoka-nishiizu",
 	}
 
 	var oceans []*model.Ocean
