@@ -44,7 +44,7 @@ func NewScrapingServiceUkishimaNishiizu(name string, url string, logging *loggin
 // Scrape ...
 func (s *ScrapingServiceUkishimaNishiizuImpl) Scrape() (*model.Ocean, error) {
 	s.logging.Info("浮島(西伊豆)のスクレイピング開始")
-	ocean := model.NewOcean("ukishima-boat-in-shizuoka-nishiizu", "http://srdkaikyo.sblo.jp/")
+	ocean := model.NewOcean(s.name, s.url)
 
 	// DOM取得
 	doc, err := s.fetchDocument(s.url, ocean)
