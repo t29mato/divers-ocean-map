@@ -41,8 +41,8 @@ func TestScrapeUkishimaTiba_20201003(t *testing.T) {
 	s.url = pwd + "/testdata/" + t.Name() + ".html"
 	ocean, _ := s.Scrape()
 	assert.Equal(t, &model.Ocean{
-		LocationName: "ukishima-in-tiba-katsuyama",
-		URL:          "http://paroparo.jp",
+		LocationName: s.name,
+		URL:          s.url,
 		Temperature: model.Temperature{
 			Min: -1,
 			Med: 24,

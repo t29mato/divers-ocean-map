@@ -42,7 +42,7 @@ func Handler(e *events.CloudWatchEvent) {
 		logging.Info("浮島 (千葉県勝山市)のDBへの挿入で失敗", err.Error())
 	}
 
-	scrapingServiceUkishimaNishiizu := ukishima.NewScrapingServiceUkishimaNishiizu(logging)
+	scrapingServiceUkishimaNishiizu := ukishima.NewScrapingServiceUkishimaNishiizu("ukishima-in-tiba-katsuyama", "http://paroparo.jp", logging)
 	oceanUkishimaNishiizu, err := scrapingServiceUkishimaNishiizu.Scrape()
 	if err != nil {
 		logging.Info("浮島 (静岡県西伊豆)のスクレイピングの途中で失敗しました", err.Error())
