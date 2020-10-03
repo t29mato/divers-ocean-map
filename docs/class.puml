@@ -17,6 +17,7 @@ namespace logging {
 namespace model {
     class Ocean << (S,Aquamarine) >> {
         + LocationName string
+        + URL string
         + Temperature Temperature
         + Visibility Visibility
         + MeasuredTime time.Time
@@ -76,14 +77,27 @@ namespace service {
         + Scrape() (*model.Ocean, error)
 
     }
+    class ScrapingServiceUkishimaNishiizuImpl << (S,Aquamarine) >> {
+        - queryArticle string
+        - queryDate string
+
+        + ScrapingService *ScrapingServiceImpl
+
+        - fetchDocument(url string, ocean *model.Ocean) (*goquery.Document, error)
+        - fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error
+        - fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error
+        - fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error
+
+        + Scrape() (*model.Ocean, error)
+
+    }
     class ScrapingServiceUkishimaTibaImpl << (S,Aquamarine) >> {
-        - queryTemperature string
-        - queryVisibility string
+        - queryArticle string
         - queryMeasuredTime string
 
         + ScrapingService *ScrapingServiceImpl
 
-        - fetchDocument(url string) (*goquery.Document, error)
+        - fetchDocument(url string, ocean *model.Ocean) (*goquery.Document, error)
         - fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error
         - fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error
         - fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error
@@ -95,6 +109,7 @@ namespace service {
 
 "service.DynamoDBService" <|-- "service.DynamoDBServiceImpl"
 "service.ScrapingService" <|-- "service.ScrapingServiceIzuOceanParkImpl"
+"service.ScrapingService" <|-- "service.ScrapingServiceUkishimaNishiizuImpl"
 "service.ScrapingService" <|-- "service.ScrapingServiceUkishimaTibaImpl"
 
 @enduml
