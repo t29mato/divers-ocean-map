@@ -1,7 +1,10 @@
 package service
 
 import (
+	"bufio"
 	"fmt"
+	"io"
+	"log"
 	"os"
 	"regexp"
 	"scraping/logging"
@@ -11,6 +14,8 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"golang.org/x/text/encoding/japanese"
+	"golang.org/x/text/transform"
 )
 
 // ScrapingServiceUkishimaNishiizuImpl ...
@@ -29,7 +34,7 @@ func NewScrapingServiceUkishimaNishiizu(logging *logging.OceanLoggingImpl) *Scra
 			db:      NewDynamoDBService(),
 			logging: logging,
 		},
-		queryArticle: "#content > div:nth-child(2) > div > div.text",
+		queryArticle: "#content > div.blog > div > div.text",
 		queryDate:    "#content > div:nth-child(2) > h2",
 	}
 }
@@ -74,14 +79,40 @@ func (s *ScrapingServiceUkishimaNishiizuImpl) Scrape() (*model.Ocean, error) {
 func (s *ScrapingServiceUkishimaNishiizuImpl) fetchDocument(url string) (*goquery.Document, error) {
 	// 単体テスト実行時はローカルのHTMLファイルから取得する
 	if strings.Contains(url, "http") {
-		return goquery.NewDocument(url)
+		doc, _ := goquery.NewDocument(url)
+		// トップページには透明度情報がないので、トップページから最新の記事のURLを取得する
+		latestArticleURL, _ := doc.Find("#content > div:nth-child(2) > div > h3 > a").Attr("href")
+		s.ScrapingService.logging.Info("latestArticleURL:", latestArticleURL)
+		latestDoc, _ := goquery.NewDocument(latestArticleURL)
+
+		// TODO: shift-jis対応する
+		return latestDoc, nil
 	}
 	file, err := os.Open(url)
+	defer file.Close()
+
+	reader := transform.NewReader(file, japanese.ShiftJIS.NewDecoder())
+	// 書き込み先ファイルを用意
+	utf8File, err := os.Create("./utf-8.txt")
 	if err != nil {
-		s.ScrapingService.logging.Info("有効なファイルパスでありません。url =", url)
+		log.Fatal(err)
+	}
+	defer utf8File.Close()
+	tee := io.TeeReader(reader, utf8File)
+	scanner := bufio.NewScanner(tee)
+	for scanner.Scan() {
+	}
+
+	if err := scanner.Err(); err != nil {
 		return nil, err
 	}
+
+	file, err = os.Open("./utf-8.txt")
 	defer file.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return goquery.NewDocumentFromReader(file)
 }
 
