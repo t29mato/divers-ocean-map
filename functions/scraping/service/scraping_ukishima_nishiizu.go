@@ -2,7 +2,6 @@ package service
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -118,7 +117,6 @@ func (s *ScrapingServiceUkishimaNishiizuImpl) fetchDocument(url string) (*goquer
 
 func (s *ScrapingServiceUkishimaNishiizuImpl) fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error {
 	articleHTML, _ := doc.Find(query).Html()
-	fmt.Println(articleHTML)
 	reg := regexp.MustCompile(`水温[\s\S]*℃`)
 	temperatureHTML := reg.FindAllStringSubmatch(articleHTML, -1)
 	reg = regexp.MustCompile(`[0-9０-９]{1,2}`)
