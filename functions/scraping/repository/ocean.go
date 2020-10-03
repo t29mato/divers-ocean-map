@@ -1,31 +1,32 @@
-package service
+package repository
 
 import (
 	"scraping/logging"
 	"scraping/model"
+	"scraping/service"
 )
 
-// RepositoryService ...
-type RepositoryService interface {
+// OceanRepository ...
+type OceanRepository interface {
 	Store(ocean *model.Ocean) error
 }
 
-// RepositoryServiceImpl ...
-type RepositoryServiceImpl struct {
+// OceanRepositoryImpl ...
+type OceanRepositoryImpl struct {
 	logging *logging.OceanLoggingImpl
-	db      *DynamoDBServiceImpl
+	db      *service.DynamoDBServiceImpl
 }
 
-// NewRepository ...
-func NewRepository(logging *logging.OceanLoggingImpl) *RepositoryServiceImpl {
-	return &RepositoryServiceImpl{
+// NewOceanRepository ...
+func NewOceanRepository(logging *logging.OceanLoggingImpl) *OceanRepositoryImpl {
+	return &OceanRepositoryImpl{
 		logging: logging,
-		db:      NewDynamoDBService(),
+		db:      service.NewDynamoDBService(),
 	}
 }
 
 // Store ...
-func (s *RepositoryServiceImpl) Store(ocean *model.Ocean) error {
+func (s *OceanRepositoryImpl) Store(ocean *model.Ocean) error {
 	s.logging.Info("データの永久保存開始", ocean.LocationName)
 	err := s.db.CreateIfNotExist(ocean)
 	if err != nil {

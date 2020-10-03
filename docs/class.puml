@@ -23,11 +23,14 @@ namespace iop {
 namespace logging {
     interface OceanLogging  {
         + Info(message ...string) 
+        + Info(message ...string) 
 
     }
     class OceanLoggingImpl << (S,Aquamarine) >> {
         - requestID string
+        - requestID string
 
+        + Info(message ...string) 
         + Info(message ...string) 
 
     }
@@ -42,9 +45,17 @@ namespace model {
         + Temperature Temperature
         + Visibility Visibility
         + MeasuredTime time.Time
+        + LocationName string
+        + URL string
+        + Temperature Temperature
+        + Visibility Visibility
+        + MeasuredTime time.Time
 
     }
     class Temperature << (S,Aquamarine) >> {
+        + Min int
+        + Med int
+        + Max int
         + Min int
         + Med int
         + Max int
@@ -54,32 +65,46 @@ namespace model {
         + Min int
         + Med int
         + Max int
+        + Min int
+        + Med int
+        + Max int
 
     }
 }
 
 
+namespace repository {
+    interface OceanRepository  {
+        + Store(ocean *model.Ocean) error
+
+    }
+    class OceanRepositoryImpl << (S,Aquamarine) >> {
+        - logging *logging.OceanLoggingImpl
+        - db *service.DynamoDBServiceImpl
+
+        + Store(ocean *model.Ocean) error
+
+    }
+}
+
+"repository.OceanRepository" <|-- "repository.OceanRepositoryImpl"
+
 namespace service {
     interface DynamoDBService  {
+        + CreateIfNotExist( *model.Ocean) error
         + CreateIfNotExist( *model.Ocean) error
 
     }
     class DynamoDBServiceImpl << (S,Aquamarine) >> {
         - tableName string
         - dynamoDB *dynamodb.DynamoDB
-
-        + CreateIfNotExist(ocean *model.Ocean) error
-
-    }
-    interface RepositoryService  {
-        + Store(ocean *model.Ocean) error
-
-    }
-    class RepositoryServiceImpl << (S,Aquamarine) >> {
         - logging *logging.OceanLoggingImpl
-        - db *DynamoDBServiceImpl
+        - tableName string
+        - dynamoDB *dynamodb.DynamoDB
 
-        + Store(ocean *model.Ocean) error
+        + FetchLatestOcean(locationName string) (*model.Ocean, error)
+        + FetchAllLatestOceans() ([]*model.Ocean, error)
+        + CreateIfNotExist(ocean *model.Ocean) error
 
     }
     interface ScrapingService  {
@@ -89,7 +114,6 @@ namespace service {
 }
 
 "service.DynamoDBService" <|-- "service.DynamoDBServiceImpl"
-"service.RepositoryService" <|-- "service.RepositoryServiceImpl"
 
 namespace tiba {
     class ScrapingServiceUkishimaTibaImpl << (S,Aquamarine) >> {

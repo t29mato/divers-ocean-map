@@ -2,7 +2,7 @@ package main
 
 import (
 	"scraping/logging"
-	"scraping/service"
+	"scraping/repository"
 	"scraping/service/shizuoka/iop"
 	"scraping/service/shizuoka/ukishima"
 	"scraping/service/tiba"
@@ -24,9 +24,9 @@ func Handler(e *events.CloudWatchEvent) {
 		logging.Info("伊豆海洋公園のスクレイピングの途中で失敗しました", err.Error())
 	}
 
-	repositoryService := service.NewRepository(logging)
+	oceanRepository := repository.NewOceanRepository(logging)
 
-	err = repositoryService.Store(oceanIzuOceanPark)
+	err = oceanRepository.Store(oceanIzuOceanPark)
 	if err != nil {
 		logging.Info("伊豆海洋公園のDBへの挿入で失敗", err.Error())
 	}
@@ -37,7 +37,7 @@ func Handler(e *events.CloudWatchEvent) {
 		logging.Info("浮島 (千葉県勝山市)のスクレイピングの途中で失敗しました", err.Error())
 	}
 
-	err = repositoryService.Store(oceanUkishimaTiba)
+	err = oceanRepository.Store(oceanUkishimaTiba)
 	if err != nil {
 		logging.Info("浮島 (千葉県勝山市)のDBへの挿入で失敗", err.Error())
 	}
@@ -48,7 +48,7 @@ func Handler(e *events.CloudWatchEvent) {
 		logging.Info("浮島 (静岡県西伊豆)のスクレイピングの途中で失敗しました", err.Error())
 	}
 
-	err = repositoryService.Store(oceanUkishimaNishiizu)
+	err = oceanRepository.Store(oceanUkishimaNishiizu)
 	if err != nil {
 		logging.Info("浮島 (静岡県西伊豆)のDBへの挿入で失敗", err.Error())
 	}
