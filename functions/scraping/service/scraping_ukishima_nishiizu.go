@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"io"
 	"log"
+	"net/http"
 	"os"
 	"regexp"
 	"scraping/logging"
@@ -71,7 +72,7 @@ func (s *ScrapingServiceUkishimaNishiizuImpl) Scrape() (*model.Ocean, error) {
 		return nil, err
 	}
 
-	s.ScrapingService.logging.Info("伊豆海洋公園のスクレイピング終了")
+	s.ScrapingService.logging.Info("浮島(西伊豆)のスクレイピング終了")
 	return ocean, err
 }
 
@@ -82,9 +83,19 @@ func (s *ScrapingServiceUkishimaNishiizuImpl) fetchDocument(url string) (*goquer
 		// トップページには透明度情報がないので、トップページから最新の記事のURLを取得する
 		latestArticleURL, _ := doc.Find("#content > div:nth-child(2) > div > h3 > a").Attr("href")
 		s.ScrapingService.logging.Info("latestArticleURL:", latestArticleURL)
-		latestDoc, _ := goquery.NewDocument(latestArticleURL)
 
-		// TODO: shift-jis対応する
+		res, err := http.Get(url)
+		if err != nil {
+			return nil, err
+		}
+		defer res.Body.Close()
+
+		utfBody := transform.NewReader(bufio.NewReader(res.Body), japanese.ShiftJIS.NewDecoder())
+		latestDoc, err := goquery.NewDocumentFromReader(utfBody)
+		if err != nil {
+			return nil, err
+		}
+
 		return latestDoc, nil
 	}
 	file, err := os.Open(url)
