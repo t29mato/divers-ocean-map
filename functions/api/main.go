@@ -17,7 +17,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	resource := request.Resource
 	logging.Info("API開始, path=", resource)
 
-	db := service.NewDynamoDBService(logging)
+	db := service.NewDynamoDBDatabase(logging)
 
 	switch resource {
 	case "/api/oceans/{name}":

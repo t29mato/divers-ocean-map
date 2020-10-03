@@ -11,22 +11,22 @@ import (
 	"scraping/model"
 )
 
-// DynamoDBServiceImpl ...
-type DynamoDBServiceImpl struct {
+// DynamoDBDatabaseImpl ...
+type DynamoDBDatabaseImpl struct {
 	tableName string
 	dynamoDB  *dynamodb.DynamoDB
 }
 
-// DynamoDBService ...
-type DynamoDBService interface {
+// DynamoDBDatabase ...
+type DynamoDBDatabase interface {
 	CreateIfNotExist(*model.Ocean) error
 }
 
-// NewDynamoDBService ...
-func NewDynamoDBService() *DynamoDBServiceImpl {
+// NewDynamoDBDatabase ...
+func NewDynamoDBDatabase() *DynamoDBDatabaseImpl {
 	if os.Getenv("ENV") == "local" {
 		endpoint := os.Getenv("DYNAMODB_ENDPOINT")
-		s := &DynamoDBServiceImpl{
+		s := &DynamoDBDatabaseImpl{
 			tableName: os.Getenv("DYNAMODB_TABLE_NAME"),
 			dynamoDB:  nil,
 		}
@@ -42,14 +42,14 @@ func NewDynamoDBService() *DynamoDBServiceImpl {
 	}
 
 	// AWS上では、endpointなしで、自動で解決してくれるため、endpointの設定なし
-	return &DynamoDBServiceImpl{
+	return &DynamoDBDatabaseImpl{
 		tableName: os.Getenv("DYNAMODB_TABLE_NAME"),
 		dynamoDB:  dynamodb.New(session.Must(session.NewSession())),
 	}
 }
 
 // CreateIfNotExist パーティションキーとレンジキーの両方が存在しない場合のみ新規レコード作成
-func (s *DynamoDBServiceImpl) CreateIfNotExist(ocean *model.Ocean) error {
+func (s *DynamoDBDatabaseImpl) CreateIfNotExist(ocean *model.Ocean) error {
 	av, err := dynamodbattribute.MarshalMap(ocean)
 	if err != nil {
 		return err

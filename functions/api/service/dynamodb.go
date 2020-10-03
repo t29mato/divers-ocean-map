@@ -11,21 +11,21 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
-// DynamoDBServiceImpl ...
-type DynamoDBServiceImpl struct {
+// DynamoDBDatabaseImpl ...
+type DynamoDBDatabaseImpl struct {
 	tableName string
 	dynamoDB  *dynamodb.DynamoDB
 	logging   *logging.OceanLoggingImpl
 }
 
-// DynamoDBService ...
-type DynamoDBService interface {
+// DynamoDBDatabase ...
+type DynamoDBDatabase interface {
 	CreateIfNotExist(*model.Ocean) error
 }
 
-// NewDynamoDBService ...
-func NewDynamoDBService(logging *logging.OceanLoggingImpl) *DynamoDBServiceImpl {
-	s := &DynamoDBServiceImpl{
+// NewDynamoDBDatabase ...
+func NewDynamoDBDatabase(logging *logging.OceanLoggingImpl) *DynamoDBDatabaseImpl {
+	s := &DynamoDBDatabaseImpl{
 		tableName: os.Getenv("DYNAMODB_TABLE_NAME"),
 		dynamoDB:  nil,
 		logging:   logging,
@@ -49,7 +49,7 @@ func NewDynamoDBService(logging *logging.OceanLoggingImpl) *DynamoDBServiceImpl 
 }
 
 // FetchLatestOcean 指定されたダイビングポイントの最新の海況情報を返す
-func (s *DynamoDBServiceImpl) FetchLatestOcean(locationName string) (*model.Ocean, error) {
+func (s *DynamoDBDatabaseImpl) FetchLatestOcean(locationName string) (*model.Ocean, error) {
 	queryInput := &dynamodb.QueryInput{
 		TableName: aws.String(s.tableName),
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
@@ -82,7 +82,7 @@ func (s *DynamoDBServiceImpl) FetchLatestOcean(locationName string) (*model.Ocea
 }
 
 // FetchAllLatestOceans 全てのダイビングポイントの最新の海況情報を返す
-func (s *DynamoDBServiceImpl) FetchAllLatestOceans() ([]*model.Ocean, error) {
+func (s *DynamoDBDatabaseImpl) FetchAllLatestOceans() ([]*model.Ocean, error) {
 	oceanNameList := []string{
 		"izu-ocean-park",
 		"ukishima-in-tiba-katsuyama",

@@ -14,14 +14,14 @@ type OceanRepository interface {
 // OceanRepositoryImpl ...
 type OceanRepositoryImpl struct {
 	logging *logging.OceanLoggingImpl
-	db      *database.DynamoDBServiceImpl
+	db      *database.DynamoDBDatabaseImpl
 }
 
 // NewOceanRepository ...
 func NewOceanRepository(logging *logging.OceanLoggingImpl) *OceanRepositoryImpl {
 	return &OceanRepositoryImpl{
 		logging: logging,
-		db:      database.NewDynamoDBService(),
+		db:      database.NewDynamoDBDatabase(),
 	}
 }
 

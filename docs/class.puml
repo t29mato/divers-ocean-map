@@ -1,10 +1,10 @@
 @startuml
 namespace database {
-    interface DynamoDBService  {
+    interface DynamoDBDatabase  {
         + CreateIfNotExist( *model.Ocean) error
 
     }
-    class DynamoDBServiceImpl << (S,Aquamarine) >> {
+    class DynamoDBDatabaseImpl << (S,Aquamarine) >> {
         - tableName string
         - dynamoDB *dynamodb.DynamoDB
 
@@ -13,8 +13,8 @@ namespace database {
     }
 }
 
-"database.DynamoDBService" <|-- "database.DynamoDBServiceImpl"
-"service.DynamoDBService" <|-- "database.DynamoDBServiceImpl"
+"database.DynamoDBDatabase" <|-- "database.DynamoDBDatabaseImpl"
+"service.DynamoDBDatabase" <|-- "database.DynamoDBDatabaseImpl"
 
 namespace iop {
     class ScrapingServiceIzuOceanParkImpl << (S,Aquamarine) >> {
@@ -97,7 +97,7 @@ namespace repository {
     }
     class OceanRepositoryImpl << (S,Aquamarine) >> {
         - logging *logging.OceanLoggingImpl
-        - db *database.DynamoDBServiceImpl
+        - db *database.DynamoDBDatabaseImpl
 
         + Store(ocean *model.Ocean) error
 
@@ -107,11 +107,11 @@ namespace repository {
 "repository.OceanRepository" <|-- "repository.OceanRepositoryImpl"
 
 namespace service {
-    interface DynamoDBService  {
+    interface DynamoDBDatabase  {
         + CreateIfNotExist( *model.Ocean) error
 
     }
-    class DynamoDBServiceImpl << (S,Aquamarine) >> {
+    class DynamoDBDatabaseImpl << (S,Aquamarine) >> {
         - tableName string
         - dynamoDB *dynamodb.DynamoDB
         - logging *logging.OceanLoggingImpl
