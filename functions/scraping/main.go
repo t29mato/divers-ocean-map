@@ -18,8 +18,8 @@ func Handler(e *events.CloudWatchEvent) {
 	logging.Info("スクレイピング開始")
 
 	// TODO: goroutine 使う
-	scrapingServiceIzuOceanPark := iop.NewScrapingServiceIzuOceanPark("izu-ocean-park", "https://iop-dc.com/", logging)
-	oceanIzuOceanPark, err := scrapingServiceIzuOceanPark.Scrape()
+	scrapingServiceIzuOceanPark := iop.NewFetchService("izu-ocean-park", "https://iop-dc.com/", logging)
+	oceanIzuOceanPark, err := scrapingServiceIzuOceanPark.Fetch()
 	if err != nil {
 		logging.Info("伊豆海洋公園のスクレイピングの途中で失敗しました", err.Error())
 	}
@@ -31,8 +31,8 @@ func Handler(e *events.CloudWatchEvent) {
 		logging.Info("伊豆海洋公園のDBへの挿入で失敗", err.Error())
 	}
 
-	scrapingServiceUkishimaTiba := tiba.NewScrapingServiceUkishimaTiba("ukishima-in-tiba-katsuyama", "http://paroparo.jp", logging)
-	oceanUkishimaTiba, err := scrapingServiceUkishimaTiba.Scrape()
+	scrapingServiceUkishimaTiba := tiba.NewFetchServiceUkishimaTiba("ukishima-in-tiba-katsuyama", "http://paroparo.jp", logging)
+	oceanUkishimaTiba, err := scrapingServiceUkishimaTiba.Fetch()
 	if err != nil {
 		logging.Info("浮島 (千葉県勝山市)のスクレイピングの途中で失敗しました", err.Error())
 	}
@@ -42,8 +42,8 @@ func Handler(e *events.CloudWatchEvent) {
 		logging.Info("浮島 (千葉県勝山市)のDBへの挿入で失敗", err.Error())
 	}
 
-	scrapingServiceUkishimaNishiizu := ukishima.NewScrapingServiceUkishimaNishiizu("ukishima-boat-in-shizuoka-nishiizu", "http://srdkaikyo.sblo.jp/", logging)
-	oceanUkishimaNishiizu, err := scrapingServiceUkishimaNishiizu.Scrape()
+	scrapingServiceUkishimaNishiizu := ukishima.NewFetchService("ukishima-boat-in-shizuoka-nishiizu", "http://srdkaikyo.sblo.jp/", logging)
+	oceanUkishimaNishiizu, err := scrapingServiceUkishimaNishiizu.Fetch()
 	if err != nil {
 		logging.Info("浮島 (静岡県西伊豆)のスクレイピングの途中で失敗しました", err.Error())
 	}

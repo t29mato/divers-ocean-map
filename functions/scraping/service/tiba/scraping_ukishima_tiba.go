@@ -13,8 +13,8 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-// ScrapingServiceUkishimaTibaImpl ...
-type ScrapingServiceUkishimaTibaImpl struct {
+// FetchServiceUkishimaTibaImpl ...
+type FetchServiceUkishimaTibaImpl struct {
 	logging           *logging.OceanLoggingImpl
 	name              string
 	url               string
@@ -22,9 +22,9 @@ type ScrapingServiceUkishimaTibaImpl struct {
 	queryMeasuredTime string
 }
 
-// NewScrapingServiceUkishimaTiba ...
-func NewScrapingServiceUkishimaTiba(name string, url string, logging *logging.OceanLoggingImpl) *ScrapingServiceUkishimaTibaImpl {
-	return &ScrapingServiceUkishimaTibaImpl{
+// NewFetchServiceUkishimaTiba ...
+func NewFetchServiceUkishimaTiba(name string, url string, logging *logging.OceanLoggingImpl) *FetchServiceUkishimaTibaImpl {
+	return &FetchServiceUkishimaTibaImpl{
 		logging:           logging,
 		name:              name,
 		url:               url,
@@ -33,8 +33,8 @@ func NewScrapingServiceUkishimaTiba(name string, url string, logging *logging.Oc
 	}
 }
 
-// Scrape ...
-func (s *ScrapingServiceUkishimaTibaImpl) Scrape() (*model.Ocean, error) {
+// Fetch ...
+func (s *FetchServiceUkishimaTibaImpl) Fetch() (*model.Ocean, error) {
 	ocean := model.NewOcean(s.name, s.url)
 
 	// DOM取得
@@ -68,7 +68,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) Scrape() (*model.Ocean, error) {
 	return ocean, err
 }
 
-func (s *ScrapingServiceUkishimaTibaImpl) fetchDocument(url string, ocean *model.Ocean) (*goquery.Document, error) {
+func (s *FetchServiceUkishimaTibaImpl) fetchDocument(url string, ocean *model.Ocean) (*goquery.Document, error) {
 	// 単体テスト実行時はローカルのHTMLファイルから取得する
 	if strings.Contains(url, "http") {
 		doc, _ := goquery.NewDocument(url)
@@ -86,7 +86,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchDocument(url string, ocean *model
 	return goquery.NewDocumentFromReader(file)
 }
 
-func (s *ScrapingServiceUkishimaTibaImpl) fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error {
+func (s *FetchServiceUkishimaTibaImpl) fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error {
 	articleHTML, _ := doc.Find(query).Html()
 	reg := regexp.MustCompile(`水温[\s\S]*℃`)
 	temperatureHTML := reg.FindAllStringSubmatch(articleHTML, -1)
@@ -114,7 +114,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchTemperature(query string, doc *go
 	return nil
 }
 
-func (s *ScrapingServiceUkishimaTibaImpl) fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error {
+func (s *FetchServiceUkishimaTibaImpl) fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error {
 	articleHTML, _ := doc.Find(query).Html()
 	reg := regexp.MustCompile(`>透明度[\s\S]*ｍ</`)
 	visibilityHTML := reg.FindAllStringSubmatch(articleHTML, -1)
@@ -140,7 +140,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchVisibility(query string, doc *goq
 	return nil
 }
 
-func (s *ScrapingServiceUkishimaTibaImpl) fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error {
+func (s *FetchServiceUkishimaTibaImpl) fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error {
 	HTML := doc.Find(query)
 	date, _ := HTML.Attr("datetime")
 	reg := regexp.MustCompile(`[0-9０-９]{1,4}`)

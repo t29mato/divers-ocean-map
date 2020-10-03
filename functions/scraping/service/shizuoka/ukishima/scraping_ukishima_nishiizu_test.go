@@ -10,13 +10,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestScrape ...
-func TestScrapeUkishimaNishiizu(t *testing.T) {
+// TestFetch ...
+func TestFetch(t *testing.T) {
 	logging := logging.NewOceanLoggingImpl("66936b3e-08e3-404b-815d-ddbccfb03cc9")
-	s := NewScrapingServiceUkishimaNishiizu("ukishima-boat-in-shizuoka-nishiizu", "http://srdkaikyo.sblo.jp/", logging)
+	s := NewFetchService("ukishima-boat-in-shizuoka-nishiizu", "http://srdkaikyo.sblo.jp/", logging)
 	pwd, _ := os.Getwd()
 	s.url = pwd + "/testdata/" + t.Name() + "_20201003.html"
-	ocean, _ := s.Scrape()
+	ocean, _ := s.Fetch()
 	assert.Equal(t, &model.Ocean{
 		LocationName: "ukishima-boat-in-shizuoka-nishiizu",
 		URL:          s.url,

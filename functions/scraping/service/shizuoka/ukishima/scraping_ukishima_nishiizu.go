@@ -20,8 +20,8 @@ import (
 	"golang.org/x/text/transform"
 )
 
-// ScrapingServiceUkishimaNishiizuImpl ...
-type ScrapingServiceUkishimaNishiizuImpl struct {
+// FetchServiceImpl ...
+type FetchServiceImpl struct {
 	logging      *logging.OceanLoggingImpl
 	name         string
 	url          string
@@ -29,11 +29,11 @@ type ScrapingServiceUkishimaNishiizuImpl struct {
 	queryDate    string
 }
 
-// NewScrapingServiceUkishimaNishiizu ...
+// NewFetchService ...
 // TODO: New functionは全て同じ関数名にする
-func NewScrapingServiceUkishimaNishiizu(name string, url string, logging *logging.OceanLoggingImpl) *ScrapingServiceUkishimaNishiizuImpl {
-	// HACK: ScrapingServiceImplの中で、各ダイビングポイントの場所に依存して変わるもの以外は、ダイビングポイントの構造体に直接持たせる (隠したい)
-	return &ScrapingServiceUkishimaNishiizuImpl{
+func NewFetchService(name string, url string, logging *logging.OceanLoggingImpl) *FetchServiceImpl {
+	// HACK: FetchServiceImplの中で、各ダイビングポイントの場所に依存して変わるもの以外は、ダイビングポイントの構造体に直接持たせる (隠したい)
+	return &FetchServiceImpl{
 		logging:      logging,
 		name:         name,
 		url:          url,
@@ -42,8 +42,8 @@ func NewScrapingServiceUkishimaNishiizu(name string, url string, logging *loggin
 	}
 }
 
-// Scrape ...
-func (s *ScrapingServiceUkishimaNishiizuImpl) Scrape() (*model.Ocean, error) {
+// Fetch ...
+func (s *FetchServiceImpl) Fetch() (*model.Ocean, error) {
 	s.logging.Info("浮島(西伊豆)のスクレイピング開始")
 	ocean := model.NewOcean(s.name, s.url)
 
@@ -79,7 +79,7 @@ func (s *ScrapingServiceUkishimaNishiizuImpl) Scrape() (*model.Ocean, error) {
 	return ocean, err
 }
 
-func (s *ScrapingServiceUkishimaNishiizuImpl) fetchDocument(url string, ocean *model.Ocean) (*goquery.Document, error) {
+func (s *FetchServiceImpl) fetchDocument(url string, ocean *model.Ocean) (*goquery.Document, error) {
 	// 単体テスト実行時はローカルのHTMLファイルから取得する
 	if strings.Contains(url, "http") {
 		doc, _ := goquery.NewDocument(url)
@@ -130,7 +130,7 @@ func (s *ScrapingServiceUkishimaNishiizuImpl) fetchDocument(url string, ocean *m
 	return goquery.NewDocumentFromReader(file)
 }
 
-func (s *ScrapingServiceUkishimaNishiizuImpl) fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error {
+func (s *FetchServiceImpl) fetchTemperature(query string, doc *goquery.Document, ocean *model.Ocean) error {
 	articleHTML, _ := doc.Find(query).Html()
 	reg := regexp.MustCompile(`水温[\s\S]*℃`)
 	temperatureHTML := reg.FindAllStringSubmatch(articleHTML, -1)
@@ -163,7 +163,7 @@ func (s *ScrapingServiceUkishimaNishiizuImpl) fetchTemperature(query string, doc
 	return nil
 }
 
-func (s *ScrapingServiceUkishimaNishiizuImpl) fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error {
+func (s *FetchServiceImpl) fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error {
 	articleHTML, _ := doc.Find(query).Html()
 	reg := regexp.MustCompile(`透明度[\s\S]*ｍ`)
 	visibilityHTML := reg.FindAllStringSubmatch(articleHTML, -1)
@@ -195,7 +195,7 @@ func (s *ScrapingServiceUkishimaNishiizuImpl) fetchVisibility(query string, doc 
 	return nil
 }
 
-func (s *ScrapingServiceUkishimaNishiizuImpl) fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error {
+func (s *FetchServiceImpl) fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error {
 	MeasuredTimeHTML, _ := doc.Find(query).Html()
 	reg := regexp.MustCompile(`\d{1,4}`)
 	measuredTimes := reg.FindAllStringSubmatch(MeasuredTimeHTML, -1)
