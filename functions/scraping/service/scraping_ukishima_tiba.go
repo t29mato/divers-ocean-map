@@ -15,8 +15,7 @@ import (
 // ScrapingServiceUkishimaTibaImpl ...
 type ScrapingServiceUkishimaTibaImpl struct {
 	ScrapingService   *ScrapingServiceImpl
-	queryTemperature  string
-	queryVisibility   string
+	queryArticle      string
 	queryMeasuredTime string
 }
 
@@ -28,8 +27,7 @@ func NewScrapingServiceUkishimaTiba(logging *logging.OceanLoggingImpl) *Scraping
 			db:      NewDynamoDBService(),
 			logging: logging,
 		},
-		queryTemperature:  "#homeConditionDetail > dl > dd:nth-child(2)",
-		queryVisibility:   "#homeConditionDetail > dl > dd:nth-child(4)",
+		queryArticle:      "div.entry-content",
 		queryMeasuredTime: "#homeConditionIndex > dl > dt",
 	}
 }
@@ -46,14 +44,14 @@ func (s *ScrapingServiceUkishimaTibaImpl) Scrape() (*model.Ocean, error) {
 	}
 
 	// 水温取得
-	err = s.fetchTemperature("div.entry-content", doc, ocean)
+	err = s.fetchTemperature(s.queryArticle, doc, ocean)
 	if err != nil {
 		s.ScrapingService.logging.Info("水温の取得に失敗")
 		return nil, err
 	}
 
 	// 透明度取得
-	err = s.fetchVisibility("div.entry-content", doc, ocean)
+	err = s.fetchVisibility(s.queryArticle, doc, ocean)
 	if err != nil {
 		s.ScrapingService.logging.Info("透明度の取得に失敗")
 		return nil, err
@@ -118,7 +116,7 @@ func (s *ScrapingServiceUkishimaTibaImpl) fetchTemperature(query string, doc *go
 
 func (s *ScrapingServiceUkishimaTibaImpl) fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error {
 	articleHTML, _ := doc.Find(query).Html()
-	reg := regexp.MustCompile(`透明度[\s\S]*ｍ</`)
+	reg := regexp.MustCompile(`>透明度[\s\S]*ｍ</`)
 	visibilityHTML := reg.FindAllStringSubmatch(articleHTML, -1)
 	reg = regexp.MustCompile(`[0-9０-９]{1,2}`)
 	visibilities := reg.FindAllStringSubmatch(visibilityHTML[0][0], -1)
