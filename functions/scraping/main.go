@@ -31,7 +31,7 @@ func Handler(e *events.CloudWatchEvent) {
 		logging.Info("伊豆海洋公園のDBへの挿入で失敗", err.Error())
 	}
 
-	scrapingServiceUkishimaTiba := tiba.NewFetchServiceUkishimaTiba("ukishima-in-tiba-katsuyama", "http://paroparo.jp", logging)
+	scrapingServiceUkishimaTiba := tiba.NewFetchService("ukishima-in-tiba-katsuyama", "http://paroparo.jp", logging)
 	oceanUkishimaTiba, err := scrapingServiceUkishimaTiba.Fetch()
 	if err != nil {
 		logging.Info("浮島 (千葉県勝山市)のスクレイピングの途中で失敗しました", err.Error())

@@ -17,7 +17,7 @@ namespace database {
 "service.DynamoDBDatabase" <|-- "database.DynamoDBDatabaseImpl"
 
 namespace iop {
-    class ScrapingServiceIzuOceanParkImpl << (S,Aquamarine) >> {
+    class FetchServiceImpl << (S,Aquamarine) >> {
         - logging *logging.OceanLoggingImpl
         - name string
         - url string
@@ -30,12 +30,12 @@ namespace iop {
         - fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error
         - fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error
 
-        + Scrape() (*model.Ocean, error)
+        + Fetch() (*model.Ocean, error)
 
     }
 }
 
-"service.ScrapingService" <|-- "iop.ScrapingServiceIzuOceanParkImpl"
+"service.FetchService" <|-- "iop.FetchServiceImpl"
 
 namespace logging {
     interface OceanLogging  {
@@ -120,15 +120,17 @@ namespace service {
         + FetchAllLatestOceans() ([]*model.Ocean, error)
 
     }
-    interface ScrapingService  {
-        + Scrape() (*model.Ocean, error)
+    interface FetchService  {
+        - fetchDocument(url string) (*goquery.Document, error)
+
+        + Fetch() (*model.Ocean, error)
 
     }
 }
 
 
 namespace tiba {
-    class ScrapingServiceUkishimaTibaImpl << (S,Aquamarine) >> {
+    class FetchServiceUkishimaTibaImpl << (S,Aquamarine) >> {
         - logging *logging.OceanLoggingImpl
         - name string
         - url string
@@ -140,15 +142,14 @@ namespace tiba {
         - fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error
         - fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error
 
-        + Scrape() (*model.Ocean, error)
+        + Fetch() (*model.Ocean, error)
 
     }
 }
 
-"service.ScrapingService" <|-- "tiba.ScrapingServiceUkishimaTibaImpl"
 
 namespace ukishima {
-    class ScrapingServiceUkishimaNishiizuImpl << (S,Aquamarine) >> {
+    class FetchServiceImpl << (S,Aquamarine) >> {
         - logging *logging.OceanLoggingImpl
         - name string
         - url string
@@ -160,11 +161,10 @@ namespace ukishima {
         - fetchVisibility(query string, doc *goquery.Document, ocean *model.Ocean) error
         - fetchMeasuredTime(query string, doc *goquery.Document, ocean *model.Ocean) error
 
-        + Scrape() (*model.Ocean, error)
+        + Fetch() (*model.Ocean, error)
 
     }
 }
 
-"service.ScrapingService" <|-- "ukishima.ScrapingServiceUkishimaNishiizuImpl"
 
 @enduml

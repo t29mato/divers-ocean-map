@@ -13,7 +13,7 @@ import (
 // TestFetch ...
 func TestFetch_20200921(t *testing.T) {
 	logging := logging.NewOceanLoggingImpl("66936b3e-08e3-404b-815d-ddbccfb03cc9")
-	s := NewFetchServiceUkishimaTiba("ukishima-in-tiba-katsuyama", "http://paroparo.jp", logging)
+	s := NewFetchService("ukishima-in-tiba-katsuyama", "http://paroparo.jp", logging)
 	pwd, _ := os.Getwd()
 	s.url = pwd + "/testdata/" + t.Name() + ".html"
 	ocean, _ := s.Fetch()
@@ -36,7 +36,7 @@ func TestFetch_20200921(t *testing.T) {
 
 func TestFetch_20201003(t *testing.T) {
 	logging := logging.NewOceanLoggingImpl("66936b3e-08e3-404b-815d-ddbccfb03cc9")
-	s := NewFetchServiceUkishimaTiba("ukishima-in-tiba-katsuyama", "http://paroparo.jp", logging)
+	s := NewFetchService("ukishima-in-tiba-katsuyama", "http://paroparo.jp", logging)
 	pwd, _ := os.Getwd()
 	s.url = pwd + "/testdata/" + t.Name() + ".html"
 	ocean, _ := s.Fetch()
