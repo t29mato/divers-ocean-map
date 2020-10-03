@@ -69,3 +69,16 @@ brew update
 brew upgrade golang
 ```
 
+### Local DynamoDB setup
+
+#### Local DynamoDBの立ち上げ
+
+``` shell
+$ docker-compose up
+```
+
+#### 管理画面の立ち上げ
+
+``` shell
+$ dynamodb-admin
+```
