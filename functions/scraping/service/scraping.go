@@ -1,6 +1,7 @@
 package service
 
 import (
+	"scraping/logging"
 	"scraping/model"
 	"strconv"
 
@@ -14,17 +15,19 @@ type ScrapingService interface {
 
 // ScrapingServiceImpl ...
 type ScrapingServiceImpl struct {
+	logging *logging.OceanLoggingImpl
+	db      *DynamoDBServiceImpl
 }
 
 // Store ...
 func (s *ScrapingServiceImpl) Store(ocean *model.Ocean) error {
-	s.Logging.Info("データの永久保存開始", ocean.LocationName)
-	err := s.DB.CreateIfNotExist(ocean)
+	s.logging.Info("データの永久保存開始", ocean.LocationName)
+	err := s.db.CreateIfNotExist(ocean)
 	if err != nil {
-		s.Logging.Info("データの永久保存に失敗")
+		s.logging.Info("データの永久保存に失敗")
 		return err
 	}
-	s.Logging.Info("データの永久保存終了", ocean.LocationName)
+	s.logging.Info("データの永久保存終了", ocean.LocationName)
 	return nil
 }
 
