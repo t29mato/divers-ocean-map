@@ -20,6 +20,7 @@ func TestScrapeUkishimaTiba(t *testing.T) {
 	ocean, _ := s.Scrape()
 	assert.Equal(t, &model.Ocean{
 		LocationName: "ukishima-in-tiba-katsuyama",
+		URL:          "http://paroparo.jp",
 		Temperature: model.Temperature{
 			Min: 24,
 			Med: -1,
@@ -43,6 +44,7 @@ func TestScrapeUkishimaTiba_20201003(t *testing.T) {
 	ocean, _ := s.Scrape()
 	assert.Equal(t, &model.Ocean{
 		LocationName: "ukishima-in-tiba-katsuyama",
+		URL:          "http://paroparo.jp",
 		Temperature: model.Temperature{
 			Min: -1,
 			Med: 24,

@@ -5,15 +5,17 @@ import "time"
 // Ocean ...
 type Ocean struct {
 	LocationName string
+	URL          string
 	Temperature  Temperature
 	Visibility   Visibility
 	MeasuredTime time.Time
 }
 
 // NewOcean ...
-func NewOcean(locationName string) *Ocean {
+func NewOcean(locationName string, url string) *Ocean {
 	return &Ocean{
 		LocationName: locationName,
+		URL:          url,
 		Temperature: Temperature{
 			Min: -1,
 			Med: -1,

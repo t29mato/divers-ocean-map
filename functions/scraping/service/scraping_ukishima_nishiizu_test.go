@@ -20,6 +20,7 @@ func TestScrapeUkishimaNishiizu(t *testing.T) {
 	ocean, _ := s.Scrape()
 	assert.Equal(t, &model.Ocean{
 		LocationName: "ukishima-boat-in-shizuoka-nishiizu",
+		URL:          "http://srdkaikyo.sblo.jp/",
 		Temperature: model.Temperature{
 			Min: 24,
 			Med: -1,
