@@ -45,7 +45,7 @@ func NewFetchService(name string, url string, logging *logging.OceanLoggingImpl)
 // Fetch ...
 func (s *FetchServiceImpl) Fetch() (*model.Ocean, error) {
 	s.logging.Info("浮島(西伊豆)のスクレイピング開始")
-	ocean := model.NewOcean(s.name, s.url)
+	ocean := model.NewOcean(s.name)
 
 	// DOM取得
 	doc, err := s.fetchDocument(s.url, ocean)
@@ -111,6 +111,7 @@ func (s *FetchServiceImpl) fetchDocument(url string, ocean *model.Ocean) (*goque
 		log.Fatal(err)
 	}
 	defer utf8File.Close()
+	ocean.URL = url
 	tee := io.TeeReader(reader, utf8File)
 	scanner := bufio.NewScanner(tee)
 	for scanner.Scan() {

@@ -38,7 +38,7 @@ func NewFetchService(name string, url string, logging *logging.OceanLoggingImpl)
 // Fetch ...
 func (s *FetchServiceImpl) Fetch() (*model.Ocean, error) {
 	s.logging.Info("伊豆海洋公園のスクレイピング開始")
-	ocean := model.NewOcean(s.name, s.url)
+	ocean := model.NewOcean(s.name)
 
 	// DOM取得
 	doc, err := s.fetchDocument(s.url, ocean)
@@ -82,6 +82,7 @@ func (s *FetchServiceImpl) fetchDocument(url string, ocean *model.Ocean) (*goque
 		s.logging.Info("有効なファイルパスでありません。url =", url)
 		return nil, err
 	}
+	ocean.URL = url
 	defer file.Close()
 	return goquery.NewDocumentFromReader(file)
 }
