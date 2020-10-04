@@ -75,6 +75,7 @@ func (s *FetchServiceImpl) Fetch() (*model.Ocean, error) {
 func (s *FetchServiceImpl) fetchDocument(url string, ocean *model.Ocean) (*goquery.Document, error) {
 	// 単体テスト実行時はローカルのHTMLファイルから取得する
 	if strings.Contains(url, "http") {
+		ocean.URL = url
 		return goquery.NewDocument(url)
 	}
 	file, err := os.Open(url)
